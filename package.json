@@ -1,0 +1,22 @@
+{
+	"name": "sass",
+	"version": "1.0.0",
+	"description": "",
+	"main": "index.js",
+	"scripts": {
+		"start": "gulp"
+	},
+	"author": "",
+	"license": "ISC",
+	"devDependencies": {
+		"browser-sync": "^2.26.14",
+		"gulp": "^4.0.2",
+		"gulp-autoprefixer": "^7.0.1",
+		"gulp-concat": "^2.6.1",
+		"gulp-sass": "^4.1.0"
+	},
+	"dependencies": {
+		"gulp-minify-css": "^1.2.4",
+		"gulp-pug": "^5.0.0"
+	}
+}

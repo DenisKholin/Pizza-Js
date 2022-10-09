@@ -1,0 +1,26 @@
+@import "partials/params";
+@import "partials/mixins";
+
+
+.navigation{
+	width: 98rem;
+	margin: 0 auto 5rem;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	font-size: 3rem;
+
+	&__menu{
+		width: 60rem;
+		display: flex;
+		justify-content: space-between;
+	}
+
+	&__side{
+		text-align: right;
+
+		&_total-price{
+			color:  rgb(19, 192, 85);
+		}
+	}
+}	

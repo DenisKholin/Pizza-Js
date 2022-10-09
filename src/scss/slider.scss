@@ -1,0 +1,15 @@
+@import "partials/params";
+@import "partials/mixins";
+
+.slider{
+	width: 102rem;
+	margin: 0 auto;
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+
+	&__navigation{
+		width: 3rem;
+		cursor: pointer;
+	}
+}
