@@ -55,21 +55,31 @@ window.addEventListener('DOMContentLoaded', () => {
 	showSlide();
 
 	class PizzaCard {
-		constructor(pizzaName, img, alt, price, ingridient, dataIngridient) {
+		constructor(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight) {
 			this.pizzaName = pizzaName;
 			this.img = img;
 			this.alt = alt;
 			this.price = price;
 			this.ingridient = ingridient;
 			this.dataIngridient = dataIngridient;
+			this.smallImg = smallImg;
+			this.bigImg = bigImg;
+			this.smallPrice = smallPrice;
+			this.bigPrice = bigPrice;
+			this.size = size;
+			this.smallSize = smallSize;
+			this.bigSize = bigSize;
+			this.weight = weight;
+			this.smallWeight = smallWeight;
+			this.bigWeight = bigWeight;
 			this.addPizzaCard();
 		}
 
 		addPizzaCard() {
 			const pizzaItem = document.createElement('div');
 			pizzaItem.classList.add('pizza__item');
+			pizzaItem.setAttribute('data-ingridient', this.dataIngridient);
 			pizzaItem.innerHTML = `
-				<div class="pizza__item" data-ingridient="${this.dataIngridient}">
 					<img src="${this.img}" alt="${this.alt}" class="pizza__item_img">
 					<p class="pizza__item_name">${this.pizzaName}</p>
 					<p class="pizza__item_ingridient">${this.ingridient}</p>
@@ -77,19 +87,32 @@ window.addEventListener('DOMContentLoaded', () => {
 						<p class="pizza__item_price">от ${this.price} руб.</p>
 						<button class="pizza__item_btn">Выбрать</button>
 					</div>
-				</div>
-			`;
+				`;
 
 			document.querySelector('.pizza__container').append(pizzaItem);
 		}
 	}
 
+
 	fetch('db.json')
 		.then((response) => response.json())
 		.then((data) => {
-			data.pizza.forEach(({ pizzaName, img, alt, price, ingridient, dataIngridient }) => {
-				new PizzaCard(pizzaName, img, alt, price, ingridient, dataIngridient);
+			data.pizza.forEach(elem => {
+				const { pizzaName, img, alt, price, ingridient, dataIngridient } = elem;
+
+				const checkNotEmpty = () => {
+					const vals = Object.keys(elem).map(key => elem[key]);
+					if (vals.some(el => el == "") || vals.some(el => el == null) || vals.some(el => el == undefined)) {
+						return false;
+					} else {
+						return true;
+					}
+				}
+
+				if (checkNotEmpty()) {
+					new PizzaCard(pizzaName, img, alt, price, ingridient, dataIngridient);
+				}
+
 			})
 		});
-
 })

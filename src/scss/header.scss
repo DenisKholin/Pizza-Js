@@ -7,7 +7,7 @@
 	display: flex;
 	align-items: center;
 	justify-content: center;
-	background-color: rgba(255, 255, 255, 0.932);
+	background-color: rgba(255, 255, 255, 0.95);
 	color: rgb(51, 46, 46);
 	position: fixed;
 	box-shadow: 0 0 1rem rgb(19, 192, 85);
@@ -37,6 +37,7 @@
 			&--big{
 				font-size: 3.6rem;
 				line-height: 120%;
+				// color: ;
 			}
 
 			&--medium{
@@ -80,7 +81,7 @@
 		
 		&_logo{
 			&--img{
-				width: 7rem;
+				width: 5rem;
 			}
 		}
 

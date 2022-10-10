@@ -1,0 +1,59 @@
+@import "partials/params";
+@import "partials/mixins";
+
+.pizza {
+	width: 98rem;
+	margin: 0 auto;
+
+	&__container {
+		display: grid;
+		grid-template-columns: repeat(3, 1fr);
+		grid-template-rows: 45rem;
+		grid-gap: 3rem;
+		grid-auto-flow: dense;
+	}
+
+	&__item {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+
+		&_img {
+			width: 30rem;
+		}
+
+		&_name {
+			font-size: 2rem;
+		}
+
+		&_ingridient {
+			font-size: 1.4rem;
+			font-weight: 100;
+			color: rgb(97, 97, 97);
+		}
+
+		&_control {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+		}
+
+		&_price {
+			font-size: 2rem;
+		}
+
+		&_btn {
+			border: none;
+			outline: none;
+			width: 12rem;
+			height: 4rem;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+			color: #fff;
+			font-size: 1.6rem;
+			background-color: rgb(19, 192, 85);
+			cursor: pointer;
+		}
+	}
+}

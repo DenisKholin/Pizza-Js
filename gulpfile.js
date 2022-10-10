@@ -8,11 +8,13 @@ var browserSync = require('browser-sync').create();
 var config = {
 	path: {
 		scss: './src/scss/**/*.scss',
-		html: '*.html'
+		html: '*.html',
+		js: './src/js/*.js'
 	},
 	output: {
 		cssName: 'bundle.min.css',
-		path: './'
+		path: './',
+		cssPath: './src/css'
 	}
 };
 
@@ -24,7 +26,7 @@ gulp.task('scss', function () {
 		.pipe(concat(config.output.cssName))
 		.pipe(autoprefixer({ browserlist: ['last 25 versions'] }))
 		.pipe(minifyCSS())
-		.pipe(gulp.dest(config.output.path))
+		.pipe(gulp.dest(config.output.cssPath))
 		.pipe(browserSync.stream());
 });
 
@@ -39,6 +41,7 @@ gulp.task('serve', function () {
 
 	gulp.watch(config.path.scss, gulp.series('scss'));
 	gulp.watch(config.path.html).on('change', browserSync.reload);
+	gulp.watch(config.path.js).on('change', browserSync.reload);
 
 });
 
