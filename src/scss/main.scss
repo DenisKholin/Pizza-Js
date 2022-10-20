@@ -14,7 +14,7 @@ body {
 	margin: 0;
 	padding: 0;
 	text-rendering: optimizeLegibility;
-	overflow-x: hidden;
+	// overflow-x: hidden;
 	font-family: 'Roboto', sans-serif;	
 }
 
@@ -33,12 +33,12 @@ a {
 }
 
 .show{
-	display: block;
+	display: block; 
 	transition: 1s;
 }
 
 .hide{
-	display: none;
+	display: none !important;
 	transition: 1s;
 }
 

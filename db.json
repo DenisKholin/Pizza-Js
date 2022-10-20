@@ -16,7 +16,8 @@
 			"smallWeight": "630",
 			"bigWeight": "875",
 			"ingridient": "Цыпленок, ананасы, соус карри, красный лук, сладкий перец, моцарелла, томатный соус",
-			"dataIngridient": "onion pepper meet"
+			"dataIngridient": "onion pepper meet",
+			"id": "ChikenCarri"
 		},
 		{
 			"pizzaName": "Индейка песто",
@@ -34,7 +35,8 @@
 			"smallWeight": "605",
 			"bigWeight": "900",
 			"ingridient": "Соус песто, пастрами из индейки, кубики брынзы, сладкий перец, красный лук, моцарелла, томатный соус",
-			"dataIngridient": "onion pepper meet"
+			"dataIngridient": "onion pepper meet",
+			"id": "TurkeyPesto"
 		},
 		{
 			"pizzaName": "Мясной Микс",
@@ -52,7 +54,8 @@
 			"smallWeight": "560",
 			"bigWeight": "720",
 			"ingridient": "Пастрами из индейки, острые колбаски чоризо, пикантная пепперони, бекон, моцарелла, томатный соус",
-			"dataIngridient": "meet"
+			"dataIngridient": "meet",
+			"id": "MeetMix"
 		},
 		{
 			"pizzaName": "Белая пепперони",
@@ -70,7 +73,8 @@
 			"smallWeight": "490",
 			"bigWeight": "620",
 			"ingridient": "Пикантная пепперони, соус альфредо, моцарелла",
-			"dataIngridient": "meet"
+			"dataIngridient": "meet",
+			"id": "WhitePepperoni"
 		},
 		{
 			"pizzaName": "",

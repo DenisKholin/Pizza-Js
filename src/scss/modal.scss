@@ -1,0 +1,137 @@
+@import "partials/params";
+@import "partials/mixins";
+
+.modal{
+	position: fixed;
+	top: 0;
+	left: 0;
+	z-index: 1050;
+	display: none;
+	// display: flex;
+	justify-content: center;
+	align-items: center;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	background-color: rgba(0, 0, 0, 0.63);
+
+	&__dialog{
+		width: 90rem;
+	}
+
+	&__content{
+		position: relative;
+		height: 60rem;
+		width: 100%;
+		background-color: #fff;
+		// box-shadow: 0 1rem 1rem rgb(19, 192, 85);
+		border-radius: 1rem;
+		display: flex;
+		align-items: stretch;
+		justify-content: space-between;
+	}
+
+	&__close{
+		font-size: 4rem;
+		position: absolute;
+		top: 0rem;
+		right: 2rem;
+		cursor: pointer;
+	}
+
+	&__pizza{
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 50%;
+		
+		&_img{
+			width: 35rem;
+			// width: 40rem;
+			// width: 32rem;
+		}
+	}
+
+	&__info{
+		width: 50%;
+		padding: 2rem;
+		background-color: rgb(250, 250, 250);
+		border-top-right-radius: 1rem;
+		border-bottom-right-radius: 1rem;
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	&__name{
+		font-size: 2.4rem;
+	}
+
+	&__description{
+		font-size: 1.4rem;
+		color: rgb(97, 97, 97);
+		margin: 1rem 0	;
+	}
+
+	&__ingridient{
+		font-size: 1.6rem;
+	}
+
+	&__radio{
+		display: none;
+
+		&:checked + label{
+			background-color: rgb(19, 192, 85);
+			color: #fff;
+		}
+	}
+
+	&__switch{
+		display: flex;
+		justify-content: center;
+		margin: 3rem 0;
+	}
+
+	&__label{
+		width: 10rem;
+		font-size: 1.4rem;
+		cursor: pointer;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		padding: 1rem;
+		background-color: transparent;
+		border: 1px solid rgb(19, 192, 85);
+		transition: 0.3s;
+
+
+		&:nth-child(2){
+		border-right: 0;
+		border-radius: 5px 0 0 5px
+		}
+	
+		&:nth-child(6){
+			border-radius: 0 5px 5px 0;
+			border-left: 0;
+		}
+
+		&:hover, &:active{
+			color: rgb(88, 88, 88);
+		}
+	}
+
+	&__button{
+		outline: 0;
+		border: 0;
+		padding: 1rem;
+		background-color: rgb(19, 192, 85);
+		color: #fff;
+		font-size: 1.6rem;
+		border-radius: 5px;
+	}
+
+}
+
+// .modal__switch .modal__label:first{
+// 	background-color: red;
+// }
