@@ -110,6 +110,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 		createModal() {
 			const modalContent = document.createElement('div');
+
 			modalContent.classList.add('modal__content');
 			modalContent.setAttribute('id', `modal${this.id}`);
 
@@ -140,13 +141,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 			document.querySelector('.modal__dialog').append(modalContent);
 
-
 			const modal = document.querySelector('.modal');
 
 			document.querySelectorAll('.pizza__item_btn').forEach(el => {
 				el.addEventListener('click', (ev) => {
 
-					modal.style.display = 'flex';
+					modal.classList.remove('hide');
+					modal.classList.add('flexShow');
+
 
 					document.querySelectorAll('.modal__content').forEach(el => {
 						el.classList.remove('show');
@@ -159,21 +161,50 @@ window.addEventListener('DOMContentLoaded', () => {
 				})
 			})
 
-			document.querySelectorAll('.modal__close').forEach(el => {
-				el.addEventListener('click', () => {
-					modal.style.display = 'none';
-					document.body.style.overflow = '';
-				})
-			})
+
+
+			function hideModal(modalSelector) {
+				modalSelector.classList.remove('flexShow');
+				modalSelector.classList.add('hide');
+				document.body.style.overflow = '';
+			}
+
+
 
 			document.addEventListener('keydown', (ev) => {
 				if (ev.code == "Escape" && getComputedStyle(modal).display == 'flex') {
-					modal.style.display = 'none';
-					document.body.style.overflow = '';
+					hideModal(modal);
 				}
 			});
+
+			modal.addEventListener('click', (ev) => {
+				if (ev.target.classList.contains('modal__close') || ev.target == modal) {
+					hideModal(modal);
+				}
+
+				if (ev.target.classList.contains('modal__radio_small')) {
+					// modalContent.querySelector('.modal__pizza_img').setAttribute('src', this.smallImg);
+					modalContent.querySelector('.modal__pizza_img').remove();
+					document.querySelector('.modal__pizza').innerHTML = `
+					<img src="${this.smallImg}" alt="${this.alt}" class="modal__pizza_img">
+					`
+
+
+					// ev.target.parentElement.parentElement.parentElement.previousElementSibling.children[0].setAttribute('src', this.smallImg);
+
+
+				}
+			})
+
+			// document.getElementById(`small${this.id}`).addEventListener('click', () => {
+
+			// })
+
 		}
 	}
+
+
+
 
 	const checkNotEmpty = (obj) => {
 		const vals = Object.keys(obj).map(key => obj[key]);
