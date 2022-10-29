@@ -124,6 +124,9 @@ window.addEventListener('DOMContentLoaded', () => {
 			modalDialog.innerHTML = '';
 			modalDialog.append(modalContent);
 
+
+			document.body.style.overflow = 'hidden';
+
 			modalContent.innerHTML = `
 					<div class="modal__close">&times;</div>
 					<div class="modal__pizza">
@@ -132,7 +135,12 @@ window.addEventListener('DOMContentLoaded', () => {
 					<div class="modal__info">
 						<div class="modal__info_content">
 							<p class="modal__name">${this.pizzaName}</p>
-							<p class="modal__description">${this.size}, традиционное тесто, ${this.weight}</p>
+							<p class="modal__description">
+								<span class="modal__description_size">${this.size}</span> 
+								, традиционное тесто, 
+								<span class="modal__description_weight">${this.weight}</span> 
+								г
+							</p>
 							<p class="modal__ingridient">${this.ingridient}</p>
 							<div class="modal__switch">
 								<input type="radio" name="size${this.id}" id="small${this.id}" class="modal__radio modal__radio_small" value="small">
@@ -149,7 +157,11 @@ window.addEventListener('DOMContentLoaded', () => {
 					</div>
 				`;
 
-			const modalPizzaImg = modalContent.querySelector('.modal__pizza_img');
+			const
+				modalPizzaImg = modalContent.querySelector('.modal__pizza_img'),
+				pizzaDescriptionSize = modalContent.querySelector('.modal__description_size'),
+				pizzaDescriptionWeight = modal.querySelector('.modal__description_weight');
+
 
 			document.addEventListener('keydown', (ev) => {
 				if (ev.code == "Escape" && getComputedStyle(modal).display == 'flex') {
@@ -163,18 +175,15 @@ window.addEventListener('DOMContentLoaded', () => {
 				}
 
 				if (ev.target.classList.contains('modal__radio_small')) {
-					modalPizzaImg.setAttribute('src', this.smallImg);
-					modalPizzaImg.style.transform = 'scale(0.8)';
+					this.switchPizza(this.smallImg, 0.8, modalPizzaImg, this.smallSize, this.smallWeight)
 				}
 
 				if (ev.target.classList.contains('modal__radio_medium')) {
-					modalPizzaImg.setAttribute('src', this.img);
-					modalPizzaImg.style.transform = 'scale(1)';
+					this.switchPizza(this.img, 1, modalPizzaImg, this.size, this.weight)
 				}
 
 				if (ev.target.classList.contains('modal__radio_big')) {
-					modalPizzaImg.setAttribute('src', this.bigImg);
-					modalPizzaImg.style.transform = 'scale(1.2)';
+					this.switchPizza(this.bigImg, 1.2, modalPizzaImg, this.bigSize, this.bigWeight)
 				}
 			})
 
@@ -185,10 +194,14 @@ window.addEventListener('DOMContentLoaded', () => {
 			modalSelector.classList.add('hide');
 			document.body.style.overflow = '';
 		}
+
+		switchPizza(pizzaImg, scaleValue, modalPizzaImg, size, weight) {
+			modalPizzaImg.setAttribute('src', pizzaImg);
+			modalPizzaImg.style.transform = `scale(${scaleValue})`;
+			document.querySelector('.modal__description_size').innerHTML = size;
+			document.querySelector('.modal__description_weight').innerHTML = weight;
+		}
 	}
-
-
-
 
 	const checkNotEmpty = (obj) => {
 		const vals = Object.keys(obj).map(key => obj[key]);
