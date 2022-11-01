@@ -242,4 +242,27 @@ window.addEventListener('DOMContentLoaded', () => {
 			callCreateModal('.pizza__item_btn', data)
 			callCreateModal('.pizza__item_img', data)
 		});
+
+	const
+		cart = document.querySelector('.cart'),
+		cartContainer = document.querySelector('.cart__container'),
+		cartClose = document.querySelector('.cart__close');
+
+	document.querySelectorAll('.cart-button').forEach(el => {
+		el.addEventListener('click', () => {
+			cart.classList.add('flexShow', 'fade');
+			cart.classList.remove('hide');
+			cart.style.height = '100vh';
+			document.body.style.overflow = 'hidden';
+			setTimeout(() => cartContainer.style.transform = 'translate(0rem)', 100);
+		})
+	})
+
+	cartClose.addEventListener('click', () => {
+		cartContainer.style.transform = 'translate(45rem)'
+		cart.classList.add('hide');
+		cart.classList.remove('flexShow', 'fade');
+		document.body.style.overflow = '';
+
+	})
 })
