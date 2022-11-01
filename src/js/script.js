@@ -97,11 +97,11 @@ window.addEventListener('DOMContentLoaded', () => {
 			pizzaItem.setAttribute('data-id', this.id);
 
 			pizzaItem.innerHTML = `
-					<img src="${this.img}" alt="${this.alt}" class="pizza__item_img">
+					<img src="${this.img}" alt="${this.alt}" data-serialNumber="${this.serialNumber}" class="pizza__item_img">
 					<p class="pizza__item_name">${this.pizzaName}</p>
 					<p class="pizza__item_ingridient">${this.ingridient}</p>
 					<div class="pizza__item_control">
-						<p class="pizza__item_price">от ${this.price} руб.</p>
+						<p class="pizza__item_price">от ${this.smallPrice} руб.</p>
 						<button data-serialNumber="${this.serialNumber}" class="pizza__item_btn">Выбрать</button>
 					</div>
 				`;
@@ -153,15 +153,16 @@ window.addEventListener('DOMContentLoaded', () => {
 								<label for="big${this.id}" class="modal__label">Большая</label>
 							</div>
 						</div>
-						<button class="modal__button">Добавить в корзину за ${this.price} руб.</button>
+						<button class="modal__button" type="button">
+						Добавить в корзину за 
+						<span class="modal__button_price">${this.price}</span> 
+						руб.
+						<span class="modal__button_flare"></span>
+						</button>
 					</div>
 				`;
 
-			const
-				modalPizzaImg = modalContent.querySelector('.modal__pizza_img'),
-				pizzaDescriptionSize = modalContent.querySelector('.modal__description_size'),
-				pizzaDescriptionWeight = modal.querySelector('.modal__description_weight');
-
+			const modalPizzaImg = modalContent.querySelector('.modal__pizza_img');
 
 			document.addEventListener('keydown', (ev) => {
 				if (ev.code == "Escape" && getComputedStyle(modal).display == 'flex') {
@@ -174,17 +175,12 @@ window.addEventListener('DOMContentLoaded', () => {
 					this.hideModal(modal);
 				}
 
-				if (ev.target.classList.contains('modal__radio_small')) {
-					this.switchPizza(this.smallImg, 0.8, modalPizzaImg, this.smallSize, this.smallWeight)
-				}
+				this.switchPizza('modal__radio_small', this.smallImg, 0.8, modalPizzaImg, this.smallSize, this.smallWeight, this.smallPrice, ev)
 
-				if (ev.target.classList.contains('modal__radio_medium')) {
-					this.switchPizza(this.img, 1, modalPizzaImg, this.size, this.weight)
-				}
+				this.switchPizza('modal__radio_medium', this.img, 1, modalPizzaImg, this.size, this.weight, this.price, ev)
 
-				if (ev.target.classList.contains('modal__radio_big')) {
-					this.switchPizza(this.bigImg, 1.2, modalPizzaImg, this.bigSize, this.bigWeight)
-				}
+				this.switchPizza('modal__radio_big', this.bigImg, 1.2, modalPizzaImg, this.bigSize, this.bigWeight, this.bigPrice, ev)
+
 			})
 
 		}
@@ -195,11 +191,14 @@ window.addEventListener('DOMContentLoaded', () => {
 			document.body.style.overflow = '';
 		}
 
-		switchPizza(pizzaImg, scaleValue, modalPizzaImg, size, weight) {
-			modalPizzaImg.setAttribute('src', pizzaImg);
-			modalPizzaImg.style.transform = `scale(${scaleValue})`;
-			document.querySelector('.modal__description_size').innerHTML = size;
-			document.querySelector('.modal__description_weight').innerHTML = weight;
+		switchPizza(radioSelector, pizzaImg, scaleValue, modalPizzaImg, size, weight, price, ev) {
+			if (ev.target.classList.contains(radioSelector)) {
+				modalPizzaImg.setAttribute('src', pizzaImg);
+				modalPizzaImg.style.transform = `scale(${scaleValue})`;
+				document.querySelector('.modal__description_size').innerHTML = size;
+				document.querySelector('.modal__description_weight').innerHTML = weight;
+				document.querySelector('.modal__button_price').innerHTML = price;
+			}
 		}
 	}
 
@@ -210,6 +209,14 @@ window.addEventListener('DOMContentLoaded', () => {
 		} else {
 			return true;
 		}
+	}
+
+	function callCreateModal(clickTrigger, data) {
+		document.querySelectorAll(clickTrigger).forEach(el => {
+			el.addEventListener('click', ev => {
+				data[ev.target.getAttribute('data-serialNumber')].createModal();
+			})
+		})
 	}
 
 	fetch('db.json')
@@ -232,11 +239,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			return pizzaArray;
 		})
 		.then((data) => {
-			document.querySelectorAll('.pizza__item_btn').forEach(el => {
-				el.addEventListener('click', ev => {
-					let cardNumber = ev.target.getAttribute('data-serialNumber');
-					data[cardNumber].createModal();
-				})
-			})
+			callCreateModal('.pizza__item_btn', data)
+			callCreateModal('.pizza__item_img', data)
 		});
 })

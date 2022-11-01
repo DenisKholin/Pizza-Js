@@ -20,6 +20,12 @@
 
 		&_img {
 			width: 30rem;
+			cursor: pointer;
+			transition: .3s;
+
+			&:hover, &:active{
+				transform: translateY(.5rem);
+			}
 		}
 
 		&_name {
@@ -50,10 +56,22 @@
 			display: flex;
 			justify-content: center;
 			align-items: center;
-			color: #fff;
+			
 			font-size: 1.6rem;
+			transition: .3s;
 			background-color: rgb(19, 192, 85);
+			color: #fff;
+			border: 1px solid rgb(19, 192, 85);
 			cursor: pointer;
+			position: relative;
+			overflow-x: hidden;
+
+			&:hover, &:active{
+				
+				background-color: transparent;
+				color: #000;
+			}
+			
 		}
 	}
 }
