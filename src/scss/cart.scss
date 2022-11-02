@@ -30,7 +30,7 @@
 
 	&__container{
 		transition: .5s;
-		transform: translate(45rem);
+		// transform: translate(45rem);
 		position: relative;
 		height: 100%;
 	}
@@ -48,9 +48,23 @@
 		padding-left: 1rem;
 	}
 
-	&__product{
-		display: flex;
-		flex-direction: column;
+	&__product{	
+		height: 81rem;
+		overflow-y: auto;
+
+		&::-webkit-scrollbar{
+			width: 1rem;
+		}
+
+		&::-webkit-scrollbar-track {
+			background: rgba(190, 190, 190, 0.596);  
+			border-radius: 20px;       
+		}
+
+		&::-webkit-scrollbar-thumb {
+			background-color: rgb(19, 192, 85);    /* цвет плашки */
+			border-radius: 20px;       /* закругления плашки */
+		}
 	}
 
 	&__item{
@@ -63,6 +77,7 @@
 		font-size: 1.7rem;
 		height: 15rem;
 		padding: 1rem;
+		margin: 1rem 0;
 
 		&_info{
 			display: flex;
@@ -134,6 +149,40 @@
 
 		&_count{
 			padding: 0 .3rem;
+		}
+	}
+
+	&__total{
+		width: 90%;
+		margin: 2rem auto;
+		font-size: 1.6rem;
+		font-weight: bold;
+		
+		&_text{
+			display: flex;
+			justify-content: space-between;
+			margin-bottom: 1rem;
+		}
+
+		&_button{
+		width: 100%;
+		outline: 0;
+		border: 0;
+		padding: 1rem;
+		background-color: rgb(19, 192, 85);
+		color: #fff;
+		font-size: 1.6rem;
+		border-radius: 5px;
+		cursor: pointer;
+		position: relative;
+		overflow-x: hidden;
+		transition: .3s;
+	
+
+		&:hover, &:active{
+			transform: scale(.97);
+		}
+
 		}
 	}
 }

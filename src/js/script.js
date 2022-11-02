@@ -246,7 +246,9 @@ window.addEventListener('DOMContentLoaded', () => {
 	const
 		cart = document.querySelector('.cart'),
 		cartContainer = document.querySelector('.cart__container'),
-		cartClose = document.querySelector('.cart__close');
+		cartContent = document.querySelector('.cart__content'),
+		cartClose = document.querySelector('.cart__close'),
+		cartItem = document.querySelectorAll('.cart__item');
 
 	document.querySelectorAll('.cart-button').forEach(el => {
 		el.addEventListener('click', () => {
@@ -263,6 +265,10 @@ window.addEventListener('DOMContentLoaded', () => {
 		cart.classList.add('hide');
 		cart.classList.remove('flexShow', 'fade');
 		document.body.style.overflow = '';
-
 	})
+
+	if (cartItem.length > 5) {
+		cartContent.style.width = '41rem';
+	}
+
 })
