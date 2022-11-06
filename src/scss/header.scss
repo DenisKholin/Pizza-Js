@@ -98,7 +98,9 @@
 
 		&_side{
 			font-size: 1.7rem;
-			text-align: right;
+			display: flex;
+			flex-direction: column;
+			align-items: flex-end;
 		}
 	}
 
@@ -106,6 +108,12 @@
 		height:  15rem;
 	}
 
-	
+}
 
+.cart-button{
+	background-color:rgb(19, 192, 85);
+	color: #fff;
+	padding: .5rem;
+	border-radius: 5rem;
+	cursor: pointer;
 }

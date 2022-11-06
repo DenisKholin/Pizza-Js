@@ -30,7 +30,7 @@
 
 	&__container{
 		transition: .5s;
-		// transform: translate(45rem);
+		transform: translate(45rem);
 		position: relative;
 		height: 100%;
 	}
@@ -106,6 +106,12 @@
 			font-size: 3rem;
 			align-self: flex-start;
 			margin-top: -1rem;
+			cursor: pointer;
+			transition: .5s;
+
+			&:hover, &:active{
+				transform:rotateX(180deg)
+			}
 		}
 
 		&_line{

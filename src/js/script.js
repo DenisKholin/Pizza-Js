@@ -66,6 +66,10 @@ window.addEventListener('DOMContentLoaded', () => {
 	//CARDS+MODAL
 	//********************************************************************/
 
+
+	let cartCount = 0;
+	const cartArray = [];
+
 	class PizzaCard {
 		constructor(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber) {
 			this.pizzaName = pizzaName;
@@ -87,7 +91,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			this.id = id;
 			this.serialNumber = serialNumber;
 			this.addPizzaCard();
-			// this.createModal();
+			// this.createCartItem();
+			// this.addToCart();
 		}
 
 		addPizzaCard() {
@@ -153,7 +158,7 @@ window.addEventListener('DOMContentLoaded', () => {
 								<label for="big${this.id}" class="modal__label">Большая</label>
 							</div>
 						</div>
-						<button class="modal__button" type="button">
+						<button class="modal__button" type="button" data-serialNumber="${this.serialNumber}">
 						Добавить в корзину за 
 						<span class="modal__button_price">${this.price}</span> 
 						руб.
@@ -169,6 +174,7 @@ window.addEventListener('DOMContentLoaded', () => {
 					this.hideModal(modal);
 				}
 			});
+
 
 			modal.addEventListener('click', (ev) => {
 				if (ev.target.classList.contains('modal__close') || ev.target == modal) {
@@ -200,6 +206,40 @@ window.addEventListener('DOMContentLoaded', () => {
 				document.querySelector('.modal__button_price').innerHTML = price;
 			}
 		}
+
+
+		createCartItem(src, size, weight) {
+			const cartItem = document.createElement('div');
+			cartItem.classList.add('cart__item')
+
+			cartItem.innerHTML = `
+				<div class="cart__item_info">
+					<img src="${src}" alt="${this.alt}" class="cart__item_img">
+					<div class="cart__item_text">
+						<p class="cart__item_title">${this.pizzaName}</p>
+						<p class="cart__item_description">
+							<span class="modal__description_size">${size}</span>
+							, традиционное тесто,
+							<span class="modal__description_weight">${weight}</span>
+							г
+						</p>
+					</div>
+					<p class="cart__item_close">&times;</p>
+				</div>
+				<div class="cart__item_line"></div>
+				<div class="cart__item_control">
+					<p class="cart__item_price">10,00 руб.</p>
+					<div class="cart__item_panel">
+						<button class="cart__item_minus" type="button">-</button>
+						<p class="cart__item_count">1</p>
+						<button class="cart__item_plus" type="button">+</button>
+					</div>
+				</div>
+			`
+
+			document.querySelector('.cart__product').append(cartItem);
+		}
+
 	}
 
 	const checkNotEmpty = (obj) => {
@@ -215,6 +255,27 @@ window.addEventListener('DOMContentLoaded', () => {
 		document.querySelectorAll(clickTrigger).forEach(el => {
 			el.addEventListener('click', ev => {
 				data[ev.target.getAttribute('data-serialNumber')].createModal();
+
+				document.querySelector('.modal__button').addEventListener('click', (ev) => {
+
+					const
+						size = document.querySelector('.modal__description_size').innerHTML,
+						weight = document.querySelector('.modal__description_weight').innerHTML,
+						src = document.querySelector('.modal__pizza_img').getAttribute('src');
+
+
+					if (!(cartArray.includes(src))) {
+						cartArray.push(src);
+						data[ev.target.getAttribute('data-serialNumber')].createCartItem(src, size, weight);
+					}
+
+					cartCount++;
+					document.querySelectorAll('.cart-count').forEach(el => {
+						el.innerHTML = cartCount;
+					})
+
+					setTimeout(() => data[ev.target.getAttribute('data-serialNumber')].hideModal(document.querySelector('.modal')), 100)
+				})
 			})
 		})
 	}
@@ -235,12 +296,14 @@ window.addEventListener('DOMContentLoaded', () => {
 				}
 
 				++serialNumber;
+
 			})
 			return pizzaArray;
 		})
 		.then((data) => {
-			callCreateModal('.pizza__item_btn', data)
-			callCreateModal('.pizza__item_img', data)
+			callCreateModal('.pizza__item_btn', data);
+			callCreateModal('.pizza__item_img', data);
+			return data;
 		});
 
 	const
@@ -248,9 +311,10 @@ window.addEventListener('DOMContentLoaded', () => {
 		cartContainer = document.querySelector('.cart__container'),
 		cartContent = document.querySelector('.cart__content'),
 		cartClose = document.querySelector('.cart__close'),
-		cartItem = document.querySelectorAll('.cart__item');
+		cartItem = document.querySelectorAll('.cart__item'),
+		cartButton = document.querySelectorAll('.cart-button');
 
-	document.querySelectorAll('.cart-button').forEach(el => {
+	cartButton.forEach(el => {
 		el.addEventListener('click', () => {
 			cart.classList.add('flexShow', 'fade');
 			cart.classList.remove('hide');
@@ -267,8 +331,5 @@ window.addEventListener('DOMContentLoaded', () => {
 		document.body.style.overflow = '';
 	})
 
-	if (cartItem.length > 5) {
-		cartContent.style.width = '41rem';
-	}
 
 })
