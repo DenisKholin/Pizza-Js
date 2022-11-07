@@ -91,8 +91,6 @@ window.addEventListener('DOMContentLoaded', () => {
 			this.id = id;
 			this.serialNumber = serialNumber;
 			this.addPizzaCard();
-			// this.createCartItem();
-			// this.addToCart();
 		}
 
 		addPizzaCard() {
@@ -208,7 +206,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 
 
-		createCartItem(src, size, weight, dataId, count) {
+		createCartItem(src, size, weight, price, dataId) {
 			const cartItem = document.createElement('div');
 			cartItem.classList.add('cart__item');
 			cartItem.setAttribute('data-id', dataId);
@@ -229,20 +227,42 @@ window.addEventListener('DOMContentLoaded', () => {
 				</div>
 				<div class="cart__item_line"></div>
 				<div class="cart__item_control">
-					<p class="cart__item_price">10,00 руб.</p>
+					<p class="cart__item_price">${price} руб.</p>
 					<div class="cart__item_panel">
 						<button class="cart__item_minus" type="button">-</button>
-						<p class="cart__item_count">${count}</p>
+						<p class="cart__item_count">1</p>
 						<button class="cart__item_plus" type="button">+</button>
 					</div>
 				</div>
 			`
 
 			document.querySelector('.cart__product').append(cartItem);
+
+			const
+				cartItemCount = cartItem.querySelector('.cart__item_count'),
+				cartItemPrice = cartItem.querySelector('.cart__item_price'),
+				priceOfOne = +cartItem.querySelector('.cart__item_price').innerHTML.slice(0, -5);
+
+
+			cartItem.querySelector('.cart__item_plus').addEventListener('click', () => {
+				cartItemCount.innerHTML++;
+				cartCount++;
+				this.refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
+			})
+
+			cartItem.querySelector('.cart__item_minus').addEventListener('click', () => {
+				cartItemCount.innerHTML--;
+				cartCount--;
+				this.refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
+			})
 		}
 
-
-
+		refreshCartitem(price, priceOfOne, count) {
+			price.innerHTML = ((priceOfOne * count.innerHTML).toFixed(2)) + ' руб.';
+			document.querySelectorAll('.cart-count').forEach(el => {
+				el.innerHTML = cartCount;
+			})
+		}
 	}
 
 	const checkNotEmpty = (obj) => {
@@ -262,12 +282,12 @@ window.addEventListener('DOMContentLoaded', () => {
 				document.querySelector('.modal__button').addEventListener('click', (ev) => {
 
 					const
-						size = document.querySelector('.modal__description_size').innerHTML,
-						weight = document.querySelector('.modal__description_weight').innerHTML,
-						src = document.querySelector('.modal__pizza_img').getAttribute('src'),
+						currentSize = document.querySelector('.modal__description_size').innerHTML,
+						currentWeight = document.querySelector('.modal__description_weight').innerHTML,
+						currentSrc = document.querySelector('.modal__pizza_img').getAttribute('src'),
+						currentPrice = document.querySelector('.modal__button_price').innerHTML,
 						serialNumber = ev.currentTarget.getAttribute('data-serialNumber');
 					let
-						currentCount = 1,
 						dataId;
 
 					document.querySelectorAll('.modal__radio').forEach(el => {
@@ -276,12 +296,12 @@ window.addEventListener('DOMContentLoaded', () => {
 						}
 					})
 
-					if (!(cartArray.includes(src))) {
-						cartArray.push(src);
+					if (!(cartArray.includes(currentSrc))) {
+						cartArray.push(currentSrc);
 
-						data[serialNumber].createCartItem(src, size, weight, dataId, currentCount);
+						data[serialNumber].createCartItem(currentSrc, currentSize, currentWeight, currentPrice, dataId);
 					} else {
-						document.querySelector(`[data-id = ${dataId}] .cart__item_count`).innerHTML = ++currentCount;
+						document.querySelector(`[data-id = ${dataId}] .cart__item_count`).innerHTML++;
 					}
 
 
