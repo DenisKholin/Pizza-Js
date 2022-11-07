@@ -208,9 +208,10 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 
 
-		createCartItem(src, size, weight) {
+		createCartItem(src, size, weight, dataId, count) {
 			const cartItem = document.createElement('div');
-			cartItem.classList.add('cart__item')
+			cartItem.classList.add('cart__item');
+			cartItem.setAttribute('data-id', dataId);
 
 			cartItem.innerHTML = `
 				<div class="cart__item_info">
@@ -231,7 +232,7 @@ window.addEventListener('DOMContentLoaded', () => {
 					<p class="cart__item_price">10,00 руб.</p>
 					<div class="cart__item_panel">
 						<button class="cart__item_minus" type="button">-</button>
-						<p class="cart__item_count">1</p>
+						<p class="cart__item_count">${count}</p>
 						<button class="cart__item_plus" type="button">+</button>
 					</div>
 				</div>
@@ -239,6 +240,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 			document.querySelector('.cart__product').append(cartItem);
 		}
+
+
 
 	}
 
@@ -261,20 +264,34 @@ window.addEventListener('DOMContentLoaded', () => {
 					const
 						size = document.querySelector('.modal__description_size').innerHTML,
 						weight = document.querySelector('.modal__description_weight').innerHTML,
-						src = document.querySelector('.modal__pizza_img').getAttribute('src');
+						src = document.querySelector('.modal__pizza_img').getAttribute('src'),
+						serialNumber = ev.currentTarget.getAttribute('data-serialNumber');
+					let
+						currentCount = 1,
+						dataId;
 
+					document.querySelectorAll('.modal__radio').forEach(el => {
+						if (el.checked) {
+							dataId = el.getAttribute('id');
+						}
+					})
 
 					if (!(cartArray.includes(src))) {
 						cartArray.push(src);
-						data[ev.target.getAttribute('data-serialNumber')].createCartItem(src, size, weight);
+
+						data[serialNumber].createCartItem(src, size, weight, dataId, currentCount);
+					} else {
+						document.querySelector(`[data-id = ${dataId}] .cart__item_count`).innerHTML = ++currentCount;
 					}
+
+
 
 					cartCount++;
 					document.querySelectorAll('.cart-count').forEach(el => {
 						el.innerHTML = cartCount;
 					})
 
-					setTimeout(() => data[ev.target.getAttribute('data-serialNumber')].hideModal(document.querySelector('.modal')), 100)
+					setTimeout(() => data[serialNumber].hideModal(document.querySelector('.modal')), 100)
 				})
 			})
 		})
@@ -309,9 +326,9 @@ window.addEventListener('DOMContentLoaded', () => {
 	const
 		cart = document.querySelector('.cart'),
 		cartContainer = document.querySelector('.cart__container'),
-		cartContent = document.querySelector('.cart__content'),
-		cartClose = document.querySelector('.cart__close'),
-		cartItem = document.querySelectorAll('.cart__item'),
+		// cartContent = document.querySelector('.cart__content'),
+		// cartClose = document.querySelector('.cart__close'),
+		// cartItem = document.querySelectorAll('.cart__item'),
 		cartButton = document.querySelectorAll('.cart-button');
 
 	cartButton.forEach(el => {
@@ -324,12 +341,24 @@ window.addEventListener('DOMContentLoaded', () => {
 		})
 	})
 
-	cartClose.addEventListener('click', () => {
+	function callCartClose() {
 		cartContainer.style.transform = 'translate(45rem)'
 		cart.classList.add('hide');
 		cart.classList.remove('flexShow', 'fade');
 		document.body.style.overflow = '';
+	}
+
+	cart.addEventListener('click', ev => {
+		if (ev.target.classList.contains('cart__close') || ev.target == cart) {
+			callCartClose()
+		}
 	})
+
+	document.addEventListener('keydown', (ev) => {
+		if (ev.code == "Escape" && getComputedStyle(cart).display == 'flex') {
+			callCartClose();
+		}
+	});
 
 
 })
