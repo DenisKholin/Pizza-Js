@@ -232,9 +232,16 @@ window.addEventListener('DOMContentLoaded', () => {
 				<div class="cart__item_control">
 					<p class="cart__item_price">${price} руб.</p>
 					<div class="cart__item_panel">
-						<button class="cart__item_minus" type="button">-</button>
+						<button class="cart__item_minus cart__item_button" type="button">-</button>
 						<p class="cart__item_count">1</p>
-						<button class="cart__item_plus" type="button">+</button>
+						<button class="cart__item_plus cart__item_button" type="button">+</button>
+					</div>
+				</div>
+				<div class="cart__item_delete">
+					<p class="cart__delete_text">Хотите удалить из корзины?</p>
+					<div class="cart__delete">
+						<button type="button" class="cart__delete_yes cart__delete_button">Да</button>
+						<button type="button" class="cart__delete_no cart__delete_button">Нет</button>
 					</div>
 				</div>
 			`
@@ -254,10 +261,17 @@ window.addEventListener('DOMContentLoaded', () => {
 			})
 
 			cartItem.querySelector('.cart__item_minus').addEventListener('click', () => {
-				cartItemCount.innerHTML--;
-				cartCount--;
-				this.refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
+				if (+cartItemCount.innerHTML <= 1) {
+					this.deleteCartItem(cartItem, src);
+				} else {
+					cartItemCount.innerHTML--;
+					cartCount--;
+					this.refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
+				}
+			})
 
+			cartItem.querySelector('.cart__item_close').addEventListener('click', () => {
+				this.deleteCartItem(cartItem, src);
 			})
 		}
 
@@ -268,6 +282,27 @@ window.addEventListener('DOMContentLoaded', () => {
 			})
 			calculateTotalPrice();
 		}
+
+		deleteCartItem(cartItem, src) {
+			cartItem.querySelector('.cart__item_delete').style.opacity = 1;
+			cartItem.querySelector('.cart__item_delete').style.zIndex = 2;
+
+			cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
+				cartItem.remove();
+				calculateTotalPrice();
+				cartCount--;
+				document.querySelectorAll('.cart-count').forEach(el => {
+					el.innerHTML = cartCount;
+				})
+				cartArray.splice(cartArray.indexOf(src), 1);
+				console.log(cartArray)
+			})
+			cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
+				cartItem.querySelector('.cart__item_delete').style.opacity = 0;
+				cartItem.querySelector('.cart__item_delete').style.zIndex = -2;
+			})
+		}
+
 	}
 
 	const checkNotEmpty = (obj) => {
@@ -306,8 +341,11 @@ window.addEventListener('DOMContentLoaded', () => {
 						data[serialNumber].createCartItem(currentSrc, currentSize, currentWeight, currentPrice, dataId);
 					} else {
 						const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
-						currentItemCount.innerHTML++;
-						document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
+						if (currentItemCount) {
+							currentItemCount.innerHTML++;
+							document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
+						}
+
 					}
 
 					calculateTotalPrice();
