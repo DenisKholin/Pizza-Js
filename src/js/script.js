@@ -67,8 +67,11 @@ window.addEventListener('DOMContentLoaded', () => {
 	//********************************************************************/
 
 
-	let cartCount = 0;
-	const cartArray = [];
+	let
+		cartCount = 0,
+		priceArr = [];
+	const
+		cartArray = [];
 
 	class PizzaCard {
 		constructor(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber) {
@@ -254,6 +257,7 @@ window.addEventListener('DOMContentLoaded', () => {
 				cartItemCount.innerHTML--;
 				cartCount--;
 				this.refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
+
 			})
 		}
 
@@ -262,6 +266,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			document.querySelectorAll('.cart-count').forEach(el => {
 				el.innerHTML = cartCount;
 			})
+			calculateTotalPrice();
 		}
 	}
 
@@ -298,13 +303,14 @@ window.addEventListener('DOMContentLoaded', () => {
 
 					if (!(cartArray.includes(currentSrc))) {
 						cartArray.push(currentSrc);
-
 						data[serialNumber].createCartItem(currentSrc, currentSize, currentWeight, currentPrice, dataId);
 					} else {
-						document.querySelector(`[data-id = ${dataId}] .cart__item_count`).innerHTML++;
+						const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
+						currentItemCount.innerHTML++;
+						document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
 					}
 
-
+					calculateTotalPrice();
 
 					cartCount++;
 					document.querySelectorAll('.cart-count').forEach(el => {
@@ -380,5 +386,15 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
+	function calculateTotalPrice() {
+		document.querySelectorAll('.cart__item_price').forEach(el => {
+			el = +el.innerHTML.slice(0, -5);
+			priceArr.push(el);
+		})
+		document.querySelectorAll('.total-price').forEach(el => {
+			el.innerHTML = priceArr.reduce((sum, current) => sum + current, 0).toFixed(2) + ' руб.';
+		})
+		priceArr = [];
+	}
 
 })
