@@ -437,9 +437,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	document.querySelector('.cart__total_button').addEventListener('click', () => {
 		if (document.querySelector('.cart-count').innerHTML != 0) {
-			let res = [];
+			let result = [];
 			document.querySelectorAll('.cart__item').forEach((el, index) => {
-				res.push({
+				result.push({
 					name: el.querySelector('.cart__item_title').innerHTML,
 					size: el.querySelector('.modal__description_size').innerHTML,
 					weight: el.querySelector('.modal__description_weight').innerHTML,
@@ -447,20 +447,35 @@ window.addEventListener('DOMContentLoaded', () => {
 					price: (el.querySelector('.cart__item_price').innerHTML.slice(0, -5) / el.querySelector('.cart__item_count').innerHTML).toFixed(2)
 				});
 			})
-			alert(JSON.stringify(res))
-			// fetch('post.json', {
-			// 	method: 'POST',
-			// 	headers: {
-			// 		'Content-Type': 'application/json'
-			// 	},
-			// 	body: JSON.stringify(res)
-			// })
-			// 	.then(res => console.log(res))
-			// 	// .then(response => response.json())
-			// 	// .then(json => console.log(json))
-			// 	.catch(error => console.log(error));
 
+			const postData = async (url, data) => {
+				const res = await fetch(url, {
+					method: 'POST',
+					headers: {
+						"Content-Type": "application/json"
+					},
+					body: JSON.stringify(data)
+				});
 
+				return await res.json();
+			};
+
+			fetch('http://localhost:3000/order')
+				.then(res => res.json())
+				.then(res => {
+					res.forEach(el => {
+						fetch(`http://localhost:3000/order/${el.id}`, {
+							method: 'DELETE',
+						})
+					})
+				}).then(() => {
+					result.forEach((el) => {
+						postData('http://localhost:3000/order', el)
+							.then(data => {
+								console.log(data);
+							})
+					})
+				})
 		}
 	})
 
