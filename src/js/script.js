@@ -130,7 +130,6 @@ window.addEventListener('DOMContentLoaded', () => {
 			modalDialog.innerHTML = '';
 			modalDialog.append(modalContent);
 
-
 			document.body.style.overflow = 'hidden';
 
 			modalContent.innerHTML = `
@@ -176,7 +175,6 @@ window.addEventListener('DOMContentLoaded', () => {
 				}
 			});
 
-
 			modal.addEventListener('click', (ev) => {
 				if (ev.target.classList.contains('modal__close') || ev.target == modal) {
 					this.hideModal(modal);
@@ -207,7 +205,6 @@ window.addEventListener('DOMContentLoaded', () => {
 				document.querySelector('.modal__button_price').innerHTML = price;
 			}
 		}
-
 
 		createCartItem(src, size, weight, price, dataId) {
 			const cartItem = document.createElement('div');
@@ -253,7 +250,6 @@ window.addEventListener('DOMContentLoaded', () => {
 				cartItemPrice = cartItem.querySelector('.cart__item_price'),
 				priceOfOne = +cartItem.querySelector('.cart__item_price').innerHTML.slice(0, -5);
 
-
 			cartItem.querySelector('.cart__item_plus').addEventListener('click', () => {
 				cartItemCount.innerHTML++;
 				cartCount++;
@@ -277,30 +273,29 @@ window.addEventListener('DOMContentLoaded', () => {
 
 		refreshCartitem(price, priceOfOne, count) {
 			price.innerHTML = ((priceOfOne * count.innerHTML).toFixed(2)) + ' руб.';
-			document.querySelectorAll('.cart-count').forEach(el => {
-				el.innerHTML = cartCount;
-			})
+			refreshCartCount()
 			calculateTotalPrice();
 		}
 
 		deleteCartItem(cartItem, src) {
-			cartItem.querySelector('.cart__item_delete').style.opacity = 1;
-			cartItem.querySelector('.cart__item_delete').style.zIndex = 2;
+			this.toggleCartItemDelete(cartItem, 1, 2);
 
 			cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
 				cartItem.remove();
 				calculateTotalPrice();
 				cartCount--;
-				document.querySelectorAll('.cart-count').forEach(el => {
-					el.innerHTML = cartCount;
-				})
+				refreshCartCount()
 				cartArray.splice(cartArray.indexOf(src), 1);
 				console.log(cartArray)
 			})
 			cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
-				cartItem.querySelector('.cart__item_delete').style.opacity = 0;
-				cartItem.querySelector('.cart__item_delete').style.zIndex = -2;
+				this.toggleCartItemDelete(cartItem, 0, -2);
 			})
+		}
+
+		toggleCartItemDelete(cartItem, opacity, zIndex) {
+			cartItem.querySelector('.cart__item_delete').style.opacity = opacity;
+			cartItem.querySelector('.cart__item_delete').style.zIndex = zIndex;
 		}
 
 	}
@@ -326,7 +321,8 @@ window.addEventListener('DOMContentLoaded', () => {
 						currentWeight = document.querySelector('.modal__description_weight').innerHTML,
 						currentSrc = document.querySelector('.modal__pizza_img').getAttribute('src'),
 						currentPrice = document.querySelector('.modal__button_price').innerHTML,
-						serialNumber = ev.currentTarget.getAttribute('data-serialNumber');
+						serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
+						currentTitle = document.querySelector('.modal__name');
 					let
 						dataId;
 
@@ -337,27 +333,45 @@ window.addEventListener('DOMContentLoaded', () => {
 					})
 
 					if (!(cartArray.includes(currentSrc))) {
+
 						cartArray.push(currentSrc);
 						data[serialNumber].createCartItem(currentSrc, currentSize, currentWeight, currentPrice, dataId);
+
 					} else {
 						const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
+
 						if (currentItemCount) {
+
 							currentItemCount.innerHTML++;
 							document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
+							console.log(currentItemCount)
 						}
-
 					}
 
 					calculateTotalPrice();
-
 					cartCount++;
-					document.querySelectorAll('.cart-count').forEach(el => {
-						el.innerHTML = cartCount;
-					})
-
+					refreshCartCount();
 					setTimeout(() => data[serialNumber].hideModal(document.querySelector('.modal')), 100)
 				})
 			})
+		})
+	}
+
+
+	function calculateTotalPrice() {
+		document.querySelectorAll('.cart__item_price').forEach(el => {
+			el = +el.innerHTML.slice(0, -5);
+			priceArr.push(el);
+		})
+		document.querySelectorAll('.total-price').forEach(el => {
+			el.innerHTML = priceArr.reduce((sum, current) => sum + current, 0).toFixed(2) + ' руб.';
+		})
+		priceArr = [];
+	}
+
+	function refreshCartCount() {
+		document.querySelectorAll('.cart-count').forEach(el => {
+			el.innerHTML = cartCount;
 		})
 	}
 
@@ -390,9 +404,6 @@ window.addEventListener('DOMContentLoaded', () => {
 	const
 		cart = document.querySelector('.cart'),
 		cartContainer = document.querySelector('.cart__container'),
-		// cartContent = document.querySelector('.cart__content'),
-		// cartClose = document.querySelector('.cart__close'),
-		// cartItem = document.querySelectorAll('.cart__item'),
 		cartButton = document.querySelectorAll('.cart-button');
 
 	cartButton.forEach(el => {
@@ -424,15 +435,35 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	function calculateTotalPrice() {
-		document.querySelectorAll('.cart__item_price').forEach(el => {
-			el = +el.innerHTML.slice(0, -5);
-			priceArr.push(el);
-		})
-		document.querySelectorAll('.total-price').forEach(el => {
-			el.innerHTML = priceArr.reduce((sum, current) => sum + current, 0).toFixed(2) + ' руб.';
-		})
-		priceArr = [];
-	}
+	document.querySelector('.cart__total_button').addEventListener('click', () => {
+		if (document.querySelector('.cart-count').innerHTML != 0) {
+			let res = [];
+			document.querySelectorAll('.cart__item').forEach((el, index) => {
+				res.push({
+					name: el.querySelector('.cart__item_title').innerHTML,
+					size: el.querySelector('.modal__description_size').innerHTML,
+					weight: el.querySelector('.modal__description_weight').innerHTML,
+					count: el.querySelector('.cart__item_count').innerHTML,
+					price: (el.querySelector('.cart__item_price').innerHTML.slice(0, -5) / el.querySelector('.cart__item_count').innerHTML).toFixed(2)
+				});
+			})
+			alert(JSON.stringify(res))
+			// fetch('post.json', {
+			// 	method: 'POST',
+			// 	headers: {
+			// 		'Content-Type': 'application/json'
+			// 	},
+			// 	body: JSON.stringify(res)
+			// })
+			// 	.then(res => console.log(res))
+			// 	// .then(response => response.json())
+			// 	// .then(json => console.log(json))
+			// 	.catch(error => console.log(error));
+
+
+		}
+	})
+
+
 
 })
