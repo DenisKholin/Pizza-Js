@@ -399,6 +399,23 @@ window.addEventListener('DOMContentLoaded', () => {
 			callCreateModal('.pizza__item_btn', data);
 			callCreateModal('.pizza__item_img', data);
 			return data;
+		})
+		.then(data => {
+			if (localStorage.getItem('totalPrice')) {
+
+				cartCount = localStorage.getItem('countOfCards');
+				for (let i = 0; i < cartCount; i++) {
+					cartArray.push(localStorage.getItem(`src-${i}`))
+					data[i].createCartItem(localStorage.getItem(`src-${i}`), localStorage.getItem(`size-${i}`), localStorage.getItem(`weight-${i}`), localStorage.getItem(`price-${i}`), localStorage.getItem(`dataId-${i}`));
+				}
+
+				// document.querySelectorAll('.total-price').forEach(el => {
+				// 	el.innerHTML = localStorage.getItem('totalPrice')
+				// })
+
+				calculateTotalPrice();
+				refreshCartCount();
+			}
 		});
 
 	const
@@ -436,49 +453,24 @@ window.addEventListener('DOMContentLoaded', () => {
 	});
 
 	document.querySelector('.cart__total_button').addEventListener('click', () => {
+		localStorage.clear();
 		if (document.querySelector('.cart-count').innerHTML != 0) {
-			let result = [];
+
 			document.querySelectorAll('.cart__item').forEach((el, index) => {
-				result.push({
-					name: el.querySelector('.cart__item_title').innerHTML,
-					size: el.querySelector('.modal__description_size').innerHTML,
-					weight: el.querySelector('.modal__description_weight').innerHTML,
-					count: el.querySelector('.cart__item_count').innerHTML,
-					price: (el.querySelector('.cart__item_price').innerHTML.slice(0, -5) / el.querySelector('.cart__item_count').innerHTML).toFixed(2)
-				});
+
+				localStorage.setItem(`name-${index}`, el.querySelector('.cart__item_title').innerHTML);
+				localStorage.setItem(`size-${index}`, el.querySelector('.modal__description_size').innerHTML);
+				localStorage.setItem(`weight-${index}`, el.querySelector('.modal__description_weight').innerHTML);
+				localStorage.setItem(`count-${index}`, el.querySelector('.cart__item_count').innerHTML);
+				localStorage.setItem(`price-${index}`, (el.querySelector('.cart__item_price').innerHTML.slice(0, -5) / el.querySelector('.cart__item_count').innerHTML).toFixed(2));
+				localStorage.setItem(`src-${index}`, el.querySelector('.cart__item_img').getAttribute('src'));
+				localStorage.setItem(`dataId-${index}`, el.getAttribute('data-id'));
+				localStorage.setItem('countOfCards', index + 1);
 			})
 
-			const postData = async (url, data) => {
-				const res = await fetch(url, {
-					method: 'POST',
-					headers: {
-						"Content-Type": "application/json"
-					},
-					body: JSON.stringify(data)
-				});
+			localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
 
-				return await res.json();
-			};
-
-			fetch('http://localhost:3000/order')
-				.then(res => res.json())
-				.then(res => {
-					res.forEach(el => {
-						fetch(`http://localhost:3000/order/${el.id}`, {
-							method: 'DELETE',
-						})
-					})
-				}).then(() => {
-					result.forEach((el) => {
-						postData('http://localhost:3000/order', el)
-							.then(data => {
-								console.log(data);
-							})
-					})
-				})
 		}
 	})
-
-
 
 })
