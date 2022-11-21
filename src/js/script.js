@@ -337,6 +337,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 						cartArray.push(currentSrc);
 						data[serialNumber].createCartItem(currentSrc, currentSize, currentWeight, currentPrice, dataId);
+						updateLocalStorage(currentTitle, currentSize, currentWeight, 1, currentPrice, currentSrc, dataId)
 
 					} else {
 						const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
@@ -456,19 +457,19 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	function updateLocalStorage(el) {
+	function updateLocalStorage(pizzaName, size, weight, count, price, src, dataId) {
 
-		localStorage.setItem(`pizza-${el.getAttribute('data-id')}`, JSON.stringify({
-			name: el.querySelector('.cart__item_title').innerHTML,
-			size: el.querySelector('.modal__description_size').innerHTML,
-			weight: el.querySelector('.modal__description_weight').innerHTML,
-			count: el.querySelector('.cart__item_count').innerHTML,
-			price: (el.querySelector('.cart__item_price').innerHTML.slice(0, -5) / el.querySelector('.cart__item_count').innerHTML).toFixed(2),
-			src: el.querySelector('.cart__item_img').getAttribute('src'),
-			dataId: el.getAttribute('data-id')
+		localStorage.setItem(`pizza-${dataId}`, JSON.stringify({
+			name: pizzaName,
+			size: size,
+			weight: weight,
+			count: count,
+			price: price,
+			src: src,
+			dataId: dataId
 		}));
 		localStorage.setItem('countOfCards', cartCount);
-		arrOfId.push(el.getAttribute('data-id'));
+		arrOfId.push(dataId);
 		localStorage.setItem('arrOfId', JSON.stringify(arrOfId));
 	}
 
@@ -478,7 +479,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		if (document.querySelector('.cart-count').innerHTML != 0) {
 			document.querySelectorAll('.cart__item').forEach((el, index) => {
 
-				updateLocalStorage(el, index)
+				// updateLocalStorage(el, index)
 
 
 			})
