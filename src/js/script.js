@@ -69,7 +69,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	let
 		cartCount = 0,
-		priceArr = [];
+		priceArr = [],
+		arrOfId = [];
 	const
 		cartArray = [];
 
@@ -405,8 +406,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 				cartCount = localStorage.getItem('countOfCards');
 				for (let i = 0; i < cartCount; i++) {
-
-					let json = JSON.parse(localStorage.getItem(`pizza-${i}`));
+					console.log(JSON.parse(localStorage.getItem('arrOfId'))[i])
+					let json = JSON.parse(localStorage.getItem(`pizza-${JSON.parse(localStorage.getItem('arrOfId'))[i]}`));
 
 					cartArray.push(json.src)
 					data[i].createCartItem(json.src, json.size, json.weight, json.price, json.dataId);
@@ -456,6 +457,7 @@ window.addEventListener('DOMContentLoaded', () => {
 	});
 
 	function updateLocalStorage(el) {
+
 		localStorage.setItem(`pizza-${el.getAttribute('data-id')}`, JSON.stringify({
 			name: el.querySelector('.cart__item_title').innerHTML,
 			size: el.querySelector('.modal__description_size').innerHTML,
@@ -465,7 +467,9 @@ window.addEventListener('DOMContentLoaded', () => {
 			src: el.querySelector('.cart__item_img').getAttribute('src'),
 			dataId: el.getAttribute('data-id')
 		}));
-		localStorage.setItem('countOfCards', index + 1);
+		localStorage.setItem('countOfCards', cartCount);
+		arrOfId.push(el.getAttribute('data-id'));
+		localStorage.setItem('arrOfId', JSON.stringify(arrOfId));
 	}
 
 	document.querySelector('.cart__total_button').addEventListener('click', () => {
@@ -474,7 +478,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		if (document.querySelector('.cart-count').innerHTML != 0) {
 			document.querySelectorAll('.cart__item').forEach((el, index) => {
 
-				// updateLocalStorage(el)
+				updateLocalStorage(el, index)
 
 
 			})
