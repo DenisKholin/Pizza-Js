@@ -405,8 +405,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
 				cartCount = localStorage.getItem('countOfCards');
 				for (let i = 0; i < cartCount; i++) {
-					cartArray.push(localStorage.getItem(`src-${i}`))
-					data[i].createCartItem(localStorage.getItem(`src-${i}`), localStorage.getItem(`size-${i}`), localStorage.getItem(`weight-${i}`), localStorage.getItem(`price-${i}`), localStorage.getItem(`dataId-${i}`));
+
+					let json = JSON.parse(localStorage.getItem(`pizza-${i}`));
+
+					cartArray.push(json.src)
+					data[i].createCartItem(json.src, json.size, json.weight, json.price, json.dataId);
 				}
 
 				// document.querySelectorAll('.total-price').forEach(el => {
@@ -452,20 +455,28 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
+	function updateLocalStorage(el) {
+		localStorage.setItem(`pizza-${el.getAttribute('data-id')}`, JSON.stringify({
+			name: el.querySelector('.cart__item_title').innerHTML,
+			size: el.querySelector('.modal__description_size').innerHTML,
+			weight: el.querySelector('.modal__description_weight').innerHTML,
+			count: el.querySelector('.cart__item_count').innerHTML,
+			price: (el.querySelector('.cart__item_price').innerHTML.slice(0, -5) / el.querySelector('.cart__item_count').innerHTML).toFixed(2),
+			src: el.querySelector('.cart__item_img').getAttribute('src'),
+			dataId: el.getAttribute('data-id')
+		}));
+		localStorage.setItem('countOfCards', index + 1);
+	}
+
 	document.querySelector('.cart__total_button').addEventListener('click', () => {
 		localStorage.clear();
-		if (document.querySelector('.cart-count').innerHTML != 0) {
 
+		if (document.querySelector('.cart-count').innerHTML != 0) {
 			document.querySelectorAll('.cart__item').forEach((el, index) => {
 
-				localStorage.setItem(`name-${index}`, el.querySelector('.cart__item_title').innerHTML);
-				localStorage.setItem(`size-${index}`, el.querySelector('.modal__description_size').innerHTML);
-				localStorage.setItem(`weight-${index}`, el.querySelector('.modal__description_weight').innerHTML);
-				localStorage.setItem(`count-${index}`, el.querySelector('.cart__item_count').innerHTML);
-				localStorage.setItem(`price-${index}`, (el.querySelector('.cart__item_price').innerHTML.slice(0, -5) / el.querySelector('.cart__item_count').innerHTML).toFixed(2));
-				localStorage.setItem(`src-${index}`, el.querySelector('.cart__item_img').getAttribute('src'));
-				localStorage.setItem(`dataId-${index}`, el.getAttribute('data-id'));
-				localStorage.setItem('countOfCards', index + 1);
+				// updateLocalStorage(el)
+
+
 			})
 
 			localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
