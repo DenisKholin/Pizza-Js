@@ -211,16 +211,16 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 
-		createCartItem(src, size, weight, price, count, dataId) {
+		createCartItem(src, size, weight, price, count, dataId, alt, pizzaName) {
 			const cartItem = document.createElement('div');
 			cartItem.classList.add('cart__item');
 			cartItem.setAttribute('data-id', dataId);
 
 			cartItem.innerHTML = `
 				<div class="cart__item_info">
-					<img src="${src}" alt="${this.alt}" class="cart__item_img">
+					<img src="${src}" alt="${alt}" class="cart__item_img">
 					<div class="cart__item_text">
-						<p class="cart__item_title">${this.pizzaName}</p>
+						<p class="cart__item_title">${pizzaName}</p>
 						<p class="cart__item_description">
 							<span class="modal__description_size">${size}</span>
 							, традиционное тесто,
@@ -263,7 +263,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 			cartItem.querySelector('.cart__item_minus').addEventListener('click', () => {
 				if (+cartItemCount.innerHTML <= 1) {
-					this.deleteCartItem(cartItem, src);
+					this.deleteCartItem(cartItem, dataId);
 				} else {
 					cartItemCount.innerHTML--;
 					cartCount--;
@@ -272,7 +272,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			})
 
 			cartItem.querySelector('.cart__item_close').addEventListener('click', () => {
-				this.deleteCartItem(cartItem, src);
+				this.deleteCartItem(cartItem, dataId);
 			})
 		}
 
@@ -282,7 +282,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			calculateTotalPrice();
 		}
 
-		deleteCartItem(cartItem, src) {
+		deleteCartItem(cartItem, dataId) {
 			this.toggleCartItemDelete(cartItem, 1, 2);
 
 			cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
@@ -290,8 +290,8 @@ window.addEventListener('DOMContentLoaded', () => {
 				calculateTotalPrice();
 				cartCount--;
 				refreshCartCount()
-				cartArray.splice(cartArray.indexOf(src), 1);
-				console.log(cartArray)
+				cartArray.splice(cartArray.indexOf(dataId), 1);
+
 			})
 			cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
 				this.toggleCartItemDelete(cartItem, 0, -2);
@@ -325,6 +325,7 @@ window.addEventListener('DOMContentLoaded', () => {
 						currentSize = document.querySelector('.modal__description_size').innerHTML,
 						currentWeight = document.querySelector('.modal__description_weight').innerHTML,
 						currentSrc = document.querySelector('.modal__pizza_img').getAttribute('src'),
+						currentAlt = document.querySelector('.modal__pizza_img').getAttribute('alt'),
 						currentPrice = document.querySelector('.modal__button_price').innerHTML,
 						serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
 						currentTitle = document.querySelector('.modal__name').innerHTML;
@@ -337,13 +338,13 @@ window.addEventListener('DOMContentLoaded', () => {
 						}
 					})
 
-					if (!(cartArray.includes(currentSrc))) {
+					if (!(cartArray.includes(dataId))) {
 
-						cartArray.push(currentSrc);
-						console.log(cartArray)
-						data[serialNumber].createCartItem(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId);
+						cartArray.push(dataId);
 
-						updateLocalStorage(currentTitle, currentSize, currentWeight, 1, currentPrice, currentSrc, dataId)
+						data[serialNumber].createCartItem(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
+
+						updateLocalStorage(currentTitle, currentSize, currentWeight, 1, currentPrice, currentSrc, dataId, currentAlt)
 
 					} else {
 						const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
@@ -353,7 +354,7 @@ window.addEventListener('DOMContentLoaded', () => {
 							currentItemCount.innerHTML++;
 							document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
 
-							updateLocalStorage(currentTitle, currentSize, currentWeight, currentItemCount.innerHTML, (currentPrice * currentItemCount.innerHTML).toFixed(2), currentSrc, dataId)
+							updateLocalStorage(currentTitle, currentSize, currentWeight, currentItemCount.innerHTML, (currentPrice * currentItemCount.innerHTML).toFixed(2), currentSrc, dataId, currentAlt)
 						}
 					}
 
@@ -419,8 +420,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 					let json = JSON.parse(localStorage.getItem(`pizza-${JSON.parse(localStorage.getItem('arrOfId'))[i]}`));
 
-					cartArray.push(json.src)
-					data[i].createCartItem(json.src, json.size, json.weight, json.price, json.count, json.dataId);
+					cartArray.push(json.dataId)
+					data[i].createCartItem(json.src, json.size, json.weight, json.price, json.count, json.dataId, json.alt, json.name);
 				}
 
 				calculateTotalPrice();
@@ -462,7 +463,7 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	});
 
-	function updateLocalStorage(pizzaName, size, weight, count, price, src, dataId) {
+	function updateLocalStorage(pizzaName, size, weight, count, price, src, dataId, alt) {
 		calculateTotalPrice();
 		refreshCartCount();
 		localStorage.setItem(`pizza-${dataId}`, JSON.stringify({
@@ -472,13 +473,14 @@ window.addEventListener('DOMContentLoaded', () => {
 			count: count,
 			price: price,
 			src: src,
-			dataId: dataId
+			dataId: dataId,
+			alt: alt
 		}));
 		localStorage.setItem('countOfCards', +cartCount + 1);
 
 		if (!arrOfId.includes(dataId)) {
-			arrOfId.push(dataId);
-			localStorage.setItem('arrOfId', JSON.stringify(arrOfId));
+			// arrOfId.push(dataId);
+			localStorage.setItem('arrOfId', JSON.stringify(cartArray));
 		}
 
 		localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
