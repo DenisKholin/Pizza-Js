@@ -74,6 +74,10 @@ window.addEventListener('DOMContentLoaded', () => {
 	const
 		cartArray = [];
 
+	if (JSON.parse(localStorage.getItem('arrOfId')) && JSON.parse(localStorage.getItem('arrOfId')).length != 0) {
+		arrOfId = JSON.parse(localStorage.getItem('arrOfId'));
+	}
+
 	class PizzaCard {
 		constructor(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber) {
 			this.pizzaName = pizzaName;
@@ -207,7 +211,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			}
 		}
 
-		createCartItem(src, size, weight, price, dataId) {
+		createCartItem(src, size, weight, price, count, dataId) {
 			const cartItem = document.createElement('div');
 			cartItem.classList.add('cart__item');
 			cartItem.setAttribute('data-id', dataId);
@@ -231,7 +235,7 @@ window.addEventListener('DOMContentLoaded', () => {
 					<p class="cart__item_price">${price} руб.</p>
 					<div class="cart__item_panel">
 						<button class="cart__item_minus cart__item_button" type="button">-</button>
-						<p class="cart__item_count">1</p>
+						<p class="cart__item_count">${count}</p>
 						<button class="cart__item_plus cart__item_button" type="button">+</button>
 					</div>
 				</div>
@@ -323,7 +327,7 @@ window.addEventListener('DOMContentLoaded', () => {
 						currentSrc = document.querySelector('.modal__pizza_img').getAttribute('src'),
 						currentPrice = document.querySelector('.modal__button_price').innerHTML,
 						serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
-						currentTitle = document.querySelector('.modal__name');
+						currentTitle = document.querySelector('.modal__name').innerHTML;
 					let
 						dataId;
 
@@ -336,7 +340,9 @@ window.addEventListener('DOMContentLoaded', () => {
 					if (!(cartArray.includes(currentSrc))) {
 
 						cartArray.push(currentSrc);
-						data[serialNumber].createCartItem(currentSrc, currentSize, currentWeight, currentPrice, dataId);
+						console.log(cartArray)
+						data[serialNumber].createCartItem(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId);
+
 						updateLocalStorage(currentTitle, currentSize, currentWeight, 1, currentPrice, currentSrc, dataId)
 
 					} else {
@@ -346,7 +352,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 							currentItemCount.innerHTML++;
 							document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
-							console.log(currentItemCount)
+
+							updateLocalStorage(currentTitle, currentSize, currentWeight, currentItemCount.innerHTML, (currentPrice * currentItemCount.innerHTML).toFixed(2), currentSrc, dataId)
 						}
 					}
 
@@ -406,17 +413,15 @@ window.addEventListener('DOMContentLoaded', () => {
 			if (localStorage.getItem('totalPrice')) {
 
 				cartCount = localStorage.getItem('countOfCards');
-				for (let i = 0; i < cartCount; i++) {
-					console.log(JSON.parse(localStorage.getItem('arrOfId'))[i])
+				countOfCartsInCard = JSON.parse(localStorage.getItem('arrOfId')).length;
+
+				for (let i = 0; i < countOfCartsInCard; i++) {
+
 					let json = JSON.parse(localStorage.getItem(`pizza-${JSON.parse(localStorage.getItem('arrOfId'))[i]}`));
 
 					cartArray.push(json.src)
-					data[i].createCartItem(json.src, json.size, json.weight, json.price, json.dataId);
+					data[i].createCartItem(json.src, json.size, json.weight, json.price, json.count, json.dataId);
 				}
-
-				// document.querySelectorAll('.total-price').forEach(el => {
-				// 	el.innerHTML = localStorage.getItem('totalPrice')
-				// })
 
 				calculateTotalPrice();
 				refreshCartCount();
@@ -458,7 +463,8 @@ window.addEventListener('DOMContentLoaded', () => {
 	});
 
 	function updateLocalStorage(pizzaName, size, weight, count, price, src, dataId) {
-
+		calculateTotalPrice();
+		refreshCartCount();
 		localStorage.setItem(`pizza-${dataId}`, JSON.stringify({
 			name: pizzaName,
 			size: size,
@@ -468,26 +474,28 @@ window.addEventListener('DOMContentLoaded', () => {
 			src: src,
 			dataId: dataId
 		}));
-		localStorage.setItem('countOfCards', cartCount);
-		arrOfId.push(dataId);
-		localStorage.setItem('arrOfId', JSON.stringify(arrOfId));
+		localStorage.setItem('countOfCards', +cartCount + 1);
+
+		if (!arrOfId.includes(dataId)) {
+			arrOfId.push(dataId);
+			localStorage.setItem('arrOfId', JSON.stringify(arrOfId));
+		}
+
+		localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
 	}
 
-	document.querySelector('.cart__total_button').addEventListener('click', () => {
-		localStorage.clear();
+	// document.querySelector('.cart__total_button').addEventListener('click', () => {
+	// 	localStorage.clear();
 
-		if (document.querySelector('.cart-count').innerHTML != 0) {
-			document.querySelectorAll('.cart__item').forEach((el, index) => {
+	// 	if (document.querySelector('.cart-count').innerHTML != 0) {
+	// 		document.querySelectorAll('.cart__item').forEach((el, index) => {
 
-				// updateLocalStorage(el, index)
+	// 		})
 
+	// 		localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
 
-			})
-
-			localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
-
-		}
-	})
+	// 	}
+	// })
 
 
 })
