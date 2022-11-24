@@ -176,13 +176,13 @@ window.addEventListener('DOMContentLoaded', () => {
 
 			document.addEventListener('keydown', (ev) => {
 				if (ev.code == "Escape" && getComputedStyle(modal).display == 'flex') {
-					this.hideModal(modal);
+					hideModal(modal);
 				}
 			});
 
 			modal.addEventListener('click', (ev) => {
 				if (ev.target.classList.contains('modal__close') || ev.target == modal) {
-					this.hideModal(modal);
+					hideModal(modal);
 				}
 
 				this.switchPizza('modal__radio_small', this.smallImg, 0.8, modalPizzaImg, this.smallSize, this.smallWeight, this.smallPrice, ev)
@@ -193,12 +193,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 			})
 
-		}
-
-		hideModal(modalSelector) {
-			modalSelector.classList.remove('flexShow', 'fade');
-			modalSelector.classList.add('hide');
-			document.body.style.overflow = '';
 		}
 
 		switchPizza(radioSelector, pizzaImg, scaleValue, modalPizzaImg, size, weight, price, ev) {
@@ -212,6 +206,14 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 
 	}
+
+
+	function hideModal(modalSelector) {
+		modalSelector.classList.remove('flexShow', 'fade');
+		modalSelector.classList.add('hide');
+		document.body.style.overflow = '';
+	}
+
 
 	const checkNotEmpty = (obj) => {
 		const vals = Object.keys(obj).map(key => obj[key]);
@@ -268,22 +270,28 @@ window.addEventListener('DOMContentLoaded', () => {
 
 		cartItem.querySelector('.cart__item_plus').addEventListener('click', () => {
 			cartItemCount.innerHTML++;
+
 			cartCount++;
+			updateLocalStorage(pizzaName, size, weight, cartItemCount.innerHTML, (priceOfOne * cartItemCount.innerHTML).toFixed(2), src, dataId, alt);
 			refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
+
+
 		})
 
 		cartItem.querySelector('.cart__item_minus').addEventListener('click', () => {
 			if (+cartItemCount.innerHTML <= 1) {
-				deleteCartItem(cartItem, dataId);
+				deleteCartItem(cartItem, dataId, cartItemCount);
 			} else {
 				cartItemCount.innerHTML--;
 				cartCount--;
 				refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
+
+				updateLocalStorage(pizzaName, size, weight, cartItemCount.innerHTML, (priceOfOne * cartItemCount.innerHTML).toFixed(2), src, dataId, alt);
 			}
 		})
 
 		cartItem.querySelector('.cart__item_close').addEventListener('click', () => {
-			deleteCartItem(cartItem, dataId);
+			deleteCartItem(cartItem, dataId, cartItemCount);
 		})
 	}
 
@@ -293,16 +301,19 @@ window.addEventListener('DOMContentLoaded', () => {
 		calculateTotalPrice();
 	}
 
-	function deleteCartItem(cartItem, dataId) {
+	function deleteCartItem(cartItem, dataId, currentCount) {
 		toggleCartItemDelete(cartItem, 1, 2);
 
 		cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
 			cartItem.remove();
 			calculateTotalPrice();
-			cartCount--;
+			cartCount = cartCount - +currentCount.innerHTML;
 			refreshCartCount()
 			cartArray.splice(cartArray.indexOf(dataId), 1);
-
+			localStorage.removeItem(`pizza-${dataId}`);
+			localStorage.setItem('countOfCards', +cartCount + 1);
+			localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
+			localStorage.setItem('arrOfId', JSON.stringify(cartArray));
 		})
 		cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
 			toggleCartItemDelete(cartItem, 0, -2);
@@ -318,55 +329,59 @@ window.addEventListener('DOMContentLoaded', () => {
 	function callCreateModal(clickTrigger, data) {
 		document.querySelectorAll(clickTrigger).forEach(el => {
 			el.addEventListener('click', ev => {
+
 				data[ev.target.getAttribute('data-serialNumber')].createModal();
 
-				document.querySelector('.modal__button').addEventListener('click', (ev) => {
-
-					const
-						currentSize = document.querySelector('.modal__description_size').innerHTML,
-						currentWeight = document.querySelector('.modal__description_weight').innerHTML,
-						currentSrc = document.querySelector('.modal__pizza_img').getAttribute('src'),
-						currentAlt = document.querySelector('.modal__pizza_img').getAttribute('alt'),
-						currentPrice = document.querySelector('.modal__button_price').innerHTML,
-						serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
-						currentTitle = document.querySelector('.modal__name').innerHTML;
-					let
-						dataId;
-
-					document.querySelectorAll('.modal__radio').forEach(el => {
-						if (el.checked) {
-							dataId = el.getAttribute('id');
-						}
-					})
-
-					if (!(cartArray.includes(dataId))) {
-
-						cartArray.push(dataId);
-
-						createCartItem(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
-
-						updateLocalStorage(currentTitle, currentSize, currentWeight, 1, currentPrice, currentSrc, dataId, currentAlt)
-
-					} else {
-						const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
-
-						if (currentItemCount) {
-
-							currentItemCount.innerHTML++;
-							document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
-
-							updateLocalStorage(currentTitle, currentSize, currentWeight, currentItemCount.innerHTML, (currentPrice * currentItemCount.innerHTML).toFixed(2), currentSrc, dataId, currentAlt)
-						}
-					}
-
-					calculateTotalPrice();
-					cartCount++;
-					refreshCartCount();
-					setTimeout(() => data[serialNumber].hideModal(document.querySelector('.modal')), 100)
-				})
 			})
 		})
 	}
+
+	document.querySelector('.modal').addEventListener('click', ev => {
+		if (ev.target.classList.contains('modal__button') || ev.target.classList.contains('modal__button_price') || ev.target.classList.contains('modal__button_flare')) {
+
+			const
+				currentSize = document.querySelector('.modal__description_size').innerHTML,
+				currentWeight = document.querySelector('.modal__description_weight').innerHTML,
+				currentSrc = document.querySelector('.modal__pizza_img').getAttribute('src'),
+				currentAlt = document.querySelector('.modal__pizza_img').getAttribute('alt'),
+				currentPrice = document.querySelector('.modal__button_price').innerHTML,
+				serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
+				currentTitle = document.querySelector('.modal__name').innerHTML;
+			let
+				dataId;
+
+			document.querySelectorAll('.modal__radio').forEach(el => {
+				if (el.checked) {
+					dataId = el.getAttribute('id');
+				}
+			})
+
+			if (!(cartArray.includes(dataId))) {
+
+				cartArray.push(dataId);
+
+				createCartItem(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
+
+				updateLocalStorage(currentTitle, currentSize, currentWeight, 1, currentPrice, currentSrc, dataId, currentAlt)
+
+			} else {
+				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
+
+				if (currentItemCount) {
+
+					currentItemCount.innerHTML++;
+					document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
+
+					updateLocalStorage(currentTitle, currentSize, currentWeight, currentItemCount.innerHTML, (currentPrice * currentItemCount.innerHTML).toFixed(2), currentSrc, dataId, currentAlt)
+				}
+			}
+
+			calculateTotalPrice();
+			cartCount++;
+			refreshCartCount();
+			setTimeout(() => hideModal(document.querySelector('.modal')), 100)
+		}
+	})
 
 
 	function calculateTotalPrice() {
@@ -411,7 +426,7 @@ window.addEventListener('DOMContentLoaded', () => {
 			callCreateModal('.pizza__item_img', data);
 			return data;
 		})
-		.then(data => {
+		.then(() => {
 			if (localStorage.getItem('totalPrice')) {
 
 				cartCount = localStorage.getItem('countOfCards');
