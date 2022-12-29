@@ -1,10 +1,166 @@
-import header from "./modules/header";
-import slider from "./modules/slider";
+/******/ (() => { // webpackBootstrap
+/******/ 	"use strict";
+/******/ 	var __webpack_modules__ = ({
+
+/***/ "./src/js/modules/header.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/header.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function header() {
+	const headerTop = document.querySelector('.header__top');
+
+	window.addEventListener('scroll', () => {
+		if (scrollY > 80) {
+			headerTop.style.marginTop = '-12rem';
+			setTimeout(() => headerTop.style.transition = '1s', 0)
+		} else {
+			headerTop.style.marginTop = '0px';
+			setTimeout(() => headerTop.style.transition = '1s', 0)
+		}
+	})
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (header);
+
+/***/ }),
+
+/***/ "./src/js/modules/slider.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/slider.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const slider = () => {
+	const
+		slides = document.querySelectorAll('.slider__item'),
+		prevSlide = document.querySelector('.slider__prev'),
+		nextSlide = document.querySelector('.slider__next');
+	let sliderIndex = 0;
+
+	function hideSlides() {
+		slides.forEach(el => {
+			el.classList.add('hide');
+			el.classList.remove('show', 'fade');
+		})
+	}
+
+	function showSlide(i = sliderIndex) {
+		slides[i].classList.add('show', 'fade');
+		slides[i].classList.remove('hide');
+	}
+
+	function switchActiveSlide() {
+		hideSlides();
+		showSlide(sliderIndex);
+	}
+
+	nextSlide.addEventListener('click', () => {
+		sliderIndex++;
+		if (sliderIndex == (slides.length)) {
+			sliderIndex = 0;
+		}
+		switchActiveSlide()
+	})
+
+	prevSlide.addEventListener('click', () => {
+		sliderIndex--;
+		if (sliderIndex == -1) {
+			sliderIndex = slides.length - 1;
+		}
+		switchActiveSlide()
+	})
+
+	hideSlides();
+	showSlide();
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (slider);
+
+/***/ })
+
+/******/ 	});
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+/******/ 	/* webpack/runtime/define property getters */
+/******/ 	(() => {
+/******/ 		// define getter functions for harmony exports
+/******/ 		__webpack_require__.d = (exports, definition) => {
+/******/ 			for(var key in definition) {
+/******/ 				if(__webpack_require__.o(definition, key) && !__webpack_require__.o(exports, key)) {
+/******/ 					Object.defineProperty(exports, key, { enumerable: true, get: definition[key] });
+/******/ 				}
+/******/ 			}
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/hasOwnProperty shorthand */
+/******/ 	(() => {
+/******/ 		__webpack_require__.o = (obj, prop) => (Object.prototype.hasOwnProperty.call(obj, prop))
+/******/ 	})();
+/******/ 	
+/******/ 	/* webpack/runtime/make namespace object */
+/******/ 	(() => {
+/******/ 		// define __esModule on exports
+/******/ 		__webpack_require__.r = (exports) => {
+/******/ 			if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 				Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 			}
+/******/ 			Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 		};
+/******/ 	})();
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+(() => {
+/*!**************************!*\
+  !*** ./src/js/script.js ***!
+  \**************************/
+__webpack_require__.r(__webpack_exports__);
+/* harmony import */ var _modules_header__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/header */ "./src/js/modules/header.js");
+/* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js");
+
+
 
 window.addEventListener('DOMContentLoaded', () => {
 
-	header();
-	slider();
+	(0,_modules_header__WEBPACK_IMPORTED_MODULE_0__["default"])();
+	(0,_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])();
 
 	//********************************************************************/
 	//SLIDER
@@ -466,3 +622,8 @@ window.addEventListener('DOMContentLoaded', () => {
 
 
 })
+})();
+
+/******/ })()
+;
+//# sourceMappingURL=bundle.js.map
