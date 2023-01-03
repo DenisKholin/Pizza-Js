@@ -1,27 +1,24 @@
-import MainClass from "./mainClass";
+export default class Modal {
 
-export default class PizzaCard extends MainClass {
-	constructor(...args) {
-		super(...args);
-	}
-
-	addPizzaCard() {
-		const pizzaItem = document.createElement('div');
-		pizzaItem.classList.add('pizza__item');
-		pizzaItem.setAttribute('data-ingridient', this.dataIngridient);
-		pizzaItem.setAttribute('data-id', this.id);
-
-		pizzaItem.innerHTML = `
-				<img src="${this.img}" alt="${this.alt}" data-serialNumber="${this.serialNumber}" class="pizza__item_img">
-				<p class="pizza__item_name">${this.pizzaName}</p>
-				<p class="pizza__item_ingridient">${this.ingridient}</p>
-				<div class="pizza__item_control">
-					<p class="pizza__item_price">от ${this.smallPrice} руб.</p>
-					<button data-serialNumber="${this.serialNumber}" class="pizza__item_btn">Выбрать</button>
-				</div>
-			`;
-
-		document.querySelector('.pizza__container').append(pizzaItem);
+	constructor(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber) {
+		this.pizzaName = pizzaName;
+		this.img = img;
+		this.alt = alt;
+		this.price = price;
+		this.ingridient = ingridient;
+		this.dataIngridient = dataIngridient;
+		this.smallImg = smallImg;
+		this.bigImg = bigImg;
+		this.smallPrice = smallPrice;
+		this.bigPrice = bigPrice;
+		this.size = size;
+		this.smallSize = smallSize;
+		this.bigSize = bigSize;
+		this.weight = weight;
+		this.smallWeight = smallWeight;
+		this.bigWeight = bigWeight;
+		this.id = id;
+		this.serialNumber = serialNumber;
 	}
 
 	createModal() {

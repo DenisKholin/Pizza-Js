@@ -1,7 +1,8 @@
 import Header from "./modules/header";
 import Slider from "./modules/slider";
-import PizzaCard from "./modules/renderClasses/pizza-cart";
+import pizzaCard from "./modules/pizzaCard";
 import createCartItem from "./modules/cart-item";
+import Modal from "./modules/modal";
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -120,14 +121,15 @@ window.addEventListener('DOMContentLoaded', () => {
 				const { pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id } = elem;
 
 				if (checkNotEmpty(elem)) {
-					pizzaArray.push(new PizzaCard(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
+
+					pizzaCard(dataIngridient, id, img, alt, serialNumber, pizzaName, smallPrice, ingridient);
+
+					pizzaArray.push(new Modal(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
 				}
 
 				++serialNumber;
 
 			})
-
-			pizzaArray.forEach(el => el.addPizzaCard())
 
 			return pizzaArray;
 

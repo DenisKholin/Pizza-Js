@@ -141,17 +141,18 @@ const Header = () => {
 
 /***/ }),
 
-/***/ "./src/js/modules/renderClasses/mainClass.js":
-/*!***************************************************!*\
-  !*** ./src/js/modules/renderClasses/mainClass.js ***!
-  \***************************************************/
+/***/ "./src/js/modules/modal.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/modal.js ***!
+  \*********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ MainClass)
+/* harmony export */   "default": () => (/* binding */ Modal)
 /* harmony export */ });
-class MainClass {
+class Modal {
+
 	constructor(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber) {
 		this.pizzaName = pizzaName;
 		this.img = img;
@@ -171,46 +172,6 @@ class MainClass {
 		this.bigWeight = bigWeight;
 		this.id = id;
 		this.serialNumber = serialNumber;
-	}
-}
-
-/***/ }),
-
-/***/ "./src/js/modules/renderClasses/pizza-cart.js":
-/*!****************************************************!*\
-  !*** ./src/js/modules/renderClasses/pizza-cart.js ***!
-  \****************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ PizzaCard)
-/* harmony export */ });
-/* harmony import */ var _mainClass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mainClass */ "./src/js/modules/renderClasses/mainClass.js");
-
-
-class PizzaCard extends _mainClass__WEBPACK_IMPORTED_MODULE_0__["default"] {
-	constructor(...args) {
-		super(...args);
-	}
-
-	addPizzaCard() {
-		const pizzaItem = document.createElement('div');
-		pizzaItem.classList.add('pizza__item');
-		pizzaItem.setAttribute('data-ingridient', this.dataIngridient);
-		pizzaItem.setAttribute('data-id', this.id);
-
-		pizzaItem.innerHTML = `
-				<img src="${this.img}" alt="${this.alt}" data-serialNumber="${this.serialNumber}" class="pizza__item_img">
-				<p class="pizza__item_name">${this.pizzaName}</p>
-				<p class="pizza__item_ingridient">${this.ingridient}</p>
-				<div class="pizza__item_control">
-					<p class="pizza__item_price">от ${this.smallPrice} руб.</p>
-					<button data-serialNumber="${this.serialNumber}" class="pizza__item_btn">Выбрать</button>
-				</div>
-			`;
-
-		document.querySelector('.pizza__container').append(pizzaItem);
 	}
 
 	createModal() {
@@ -299,6 +260,40 @@ class PizzaCard extends _mainClass__WEBPACK_IMPORTED_MODULE_0__["default"] {
 	}
 
 }
+
+/***/ }),
+
+/***/ "./src/js/modules/pizzaCard.js":
+/*!*************************************!*\
+  !*** ./src/js/modules/pizzaCard.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const pizzaCard = (dataIngridient, id, img, alt, serialNumber, pizzaName, smallPrice, ingridient) => {
+
+	const pizzaItem = document.createElement('div');
+	pizzaItem.classList.add('pizza__item');
+	pizzaItem.setAttribute('data-ingridient', dataIngridient);
+	pizzaItem.setAttribute('data-id', id);
+
+	pizzaItem.innerHTML = `
+				<img src="${img}" alt="${alt}" data-serialNumber="${serialNumber}" class="pizza__item_img">
+				<p class="pizza__item_name">${pizzaName}</p>
+				<p class="pizza__item_ingridient">${ingridient}</p>
+				<div class="pizza__item_control">
+					<p class="pizza__item_price">от ${smallPrice} руб.</p>
+					<button data-serialNumber="${serialNumber}" class="pizza__item_btn">Выбрать</button>
+				</div>
+			`;
+
+	document.querySelector('.pizza__container').append(pizzaItem);
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (pizzaCard);
 
 /***/ }),
 
@@ -426,8 +421,10 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_header__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/header */ "./src/js/modules/header.js");
 /* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js");
-/* harmony import */ var _modules_renderClasses_pizza_cart__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/renderClasses/pizza-cart */ "./src/js/modules/renderClasses/pizza-cart.js");
+/* harmony import */ var _modules_pizzaCard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/pizzaCard */ "./src/js/modules/pizzaCard.js");
 /* harmony import */ var _modules_cart_item__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/cart-item */ "./src/js/modules/cart-item.js");
+/* harmony import */ var _modules_modal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js");
+
 
 
 
@@ -550,14 +547,15 @@ window.addEventListener('DOMContentLoaded', () => {
 				const { pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id } = elem;
 
 				if (checkNotEmpty(elem)) {
-					pizzaArray.push(new _modules_renderClasses_pizza_cart__WEBPACK_IMPORTED_MODULE_2__["default"](pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
+
+					(0,_modules_pizzaCard__WEBPACK_IMPORTED_MODULE_2__["default"])(dataIngridient, id, img, alt, serialNumber, pizzaName, smallPrice, ingridient);
+
+					pizzaArray.push(new _modules_modal__WEBPACK_IMPORTED_MODULE_4__["default"](pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
 				}
 
 				++serialNumber;
 
 			})
-
-			pizzaArray.forEach(el => el.addPizzaCard())
 
 			return pizzaArray;
 
