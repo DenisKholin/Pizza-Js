@@ -107,3 +107,24 @@ export default class Modal {
 	}
 
 }
+
+function hideModal(modalSelector) {
+	modalSelector.classList.remove('flexShow', 'fade');
+	modalSelector.classList.add('hide');
+	document.body.style.overflow = '';
+}
+
+function callCreateModal(clickTrigger, data) {
+	document.querySelectorAll(clickTrigger).forEach(el => {
+		el.addEventListener('click', ev => {
+
+			data[ev.target.getAttribute('data-serialNumber')].createModal();
+
+		})
+	})
+}
+
+export {
+	hideModal,
+	callCreateModal
+}

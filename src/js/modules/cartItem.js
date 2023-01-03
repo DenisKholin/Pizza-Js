@@ -1,3 +1,5 @@
+import { calculateTotalPrice, refreshCartCount } from "./total";
+
 function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName) {
 	const cartItem = document.createElement('div');
 	cartItem.classList.add('cart__item');

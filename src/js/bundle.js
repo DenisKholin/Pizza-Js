@@ -2,16 +2,70 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
-/***/ "./src/js/modules/cart-item.js":
-/*!*************************************!*\
-  !*** ./src/js/modules/cart-item.js ***!
-  \*************************************/
+/***/ "./src/js/modules/cart.js":
+/*!********************************!*\
+  !*** ./src/js/modules/cart.js ***!
+  \********************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
+const cart = () => {
+
+	const
+		cart = document.querySelector('.cart'),
+		cartContainer = document.querySelector('.cart__container'),
+		cartButton = document.querySelectorAll('.cart-button');
+
+	cartButton.forEach(el => {
+		el.addEventListener('click', () => {
+			cart.classList.add('flexShow', 'fade');
+			cart.classList.remove('hide');
+			cart.style.height = '100vh';
+			document.body.style.overflow = 'hidden';
+			setTimeout(() => cartContainer.style.transform = 'translate(0rem)', 100);
+		})
+	})
+
+	function callCartClose() {
+		cartContainer.style.transform = 'translate(45rem)'
+		cart.classList.add('hide');
+		cart.classList.remove('flexShow', 'fade');
+		document.body.style.overflow = '';
+	}
+
+	cart.addEventListener('click', ev => {
+		if (ev.target.classList.contains('cart__close') || ev.target == cart) {
+			callCartClose()
+		}
+	})
+
+	document.addEventListener('keydown', (ev) => {
+		if (ev.code == "Escape" && getComputedStyle(cart).display == 'flex') {
+			callCartClose();
+		}
+	});
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (cart);
+
+/***/ }),
+
+/***/ "./src/js/modules/cartItem.js":
+/*!************************************!*\
+  !*** ./src/js/modules/cartItem.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _total__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./total */ "./src/js/modules/total.js");
+
+
 function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName) {
 	const cartItem = document.createElement('div');
 	cartItem.classList.add('cart__item');
@@ -85,8 +139,8 @@ function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName)
 
 function refreshCartitem(price, priceOfOne, count) {
 	price.innerHTML = ((priceOfOne * count.innerHTML).toFixed(2)) + ' руб.';
-	refreshCartCount()
-	calculateTotalPrice();
+	(0,_total__WEBPACK_IMPORTED_MODULE_0__.refreshCartCount)()
+	;(0,_total__WEBPACK_IMPORTED_MODULE_0__.calculateTotalPrice)();
 }
 
 function deleteCartItem(cartItem, dataId, currentCount) {
@@ -94,9 +148,9 @@ function deleteCartItem(cartItem, dataId, currentCount) {
 
 	cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
 		cartItem.remove();
-		calculateTotalPrice();
+		(0,_total__WEBPACK_IMPORTED_MODULE_0__.calculateTotalPrice)();
 		cartCount = cartCount - +currentCount.innerHTML;
-		refreshCartCount()
+		(0,_total__WEBPACK_IMPORTED_MODULE_0__.refreshCartCount)()
 		cartArray.splice(cartArray.indexOf(dataId), 1);
 	})
 	cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
@@ -149,7 +203,9 @@ const Header = () => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ Modal)
+/* harmony export */   "callCreateModal": () => (/* binding */ callCreateModal),
+/* harmony export */   "default": () => (/* binding */ Modal),
+/* harmony export */   "hideModal": () => (/* binding */ hideModal)
 /* harmony export */ });
 class Modal {
 
@@ -261,6 +317,24 @@ class Modal {
 
 }
 
+function hideModal(modalSelector) {
+	modalSelector.classList.remove('flexShow', 'fade');
+	modalSelector.classList.add('hide');
+	document.body.style.overflow = '';
+}
+
+function callCreateModal(clickTrigger, data) {
+	document.querySelectorAll(clickTrigger).forEach(el => {
+		el.addEventListener('click', ev => {
+
+			data[ev.target.getAttribute('data-serialNumber')].createModal();
+
+		})
+	})
+}
+
+
+
 /***/ }),
 
 /***/ "./src/js/modules/pizzaCard.js":
@@ -354,6 +428,38 @@ const Slider = () => {
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Slider);
 
+/***/ }),
+
+/***/ "./src/js/modules/total.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/total.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "calculateTotalPrice": () => (/* binding */ calculateTotalPrice),
+/* harmony export */   "refreshCartCount": () => (/* binding */ refreshCartCount)
+/* harmony export */ });
+function calculateTotalPrice() {
+	document.querySelectorAll('.cart__item_price').forEach(el => {
+		el = +el.innerHTML.slice(0, -5);
+		priceArr.push(el);
+	})
+	document.querySelectorAll('.total-price').forEach(el => {
+		el.innerHTML = priceArr.reduce((sum, current) => sum + current, 0).toFixed(2) + ' руб.';
+	})
+	priceArr = [];
+}
+
+function refreshCartCount() {
+	document.querySelectorAll('.cart-count').forEach(el => {
+		el.innerHTML = cartCount;
+	})
+}
+
+
+
 /***/ })
 
 /******/ 	});
@@ -422,8 +528,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_header__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/header */ "./src/js/modules/header.js");
 /* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js");
 /* harmony import */ var _modules_pizzaCard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/pizzaCard */ "./src/js/modules/pizzaCard.js");
-/* harmony import */ var _modules_cart_item__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/cart-item */ "./src/js/modules/cart-item.js");
+/* harmony import */ var _modules_cartItem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/cartItem */ "./src/js/modules/cartItem.js");
 /* harmony import */ var _modules_modal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js");
+/* harmony import */ var _modules_cart__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/cart */ "./src/js/modules/cart.js");
+/* harmony import */ var _modules_total__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/total */ "./src/js/modules/total.js");
+
+
 
 
 
@@ -434,6 +544,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	(0,_modules_header__WEBPACK_IMPORTED_MODULE_0__["default"])();
 	(0,_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])();
+	(0,_modules_cart__WEBPACK_IMPORTED_MODULE_5__["default"])();
 
 	let
 		cartCount = 0,
@@ -441,18 +552,6 @@ window.addEventListener('DOMContentLoaded', () => {
 		arrOfId = [];
 	const
 		cartArray = [];
-
-	if (JSON.parse(localStorage.getItem('arrOfId')) && JSON.parse(localStorage.getItem('arrOfId')).length != 0) {
-		arrOfId = JSON.parse(localStorage.getItem('arrOfId'));
-	}
-
-
-	function hideModal(modalSelector) {
-		modalSelector.classList.remove('flexShow', 'fade');
-		modalSelector.classList.add('hide');
-		document.body.style.overflow = '';
-	}
-
 
 	const checkNotEmpty = (obj) => {
 		const vals = Object.keys(obj).map(key => obj[key]);
@@ -463,16 +562,6 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-
-	function callCreateModal(clickTrigger, data) {
-		document.querySelectorAll(clickTrigger).forEach(el => {
-			el.addEventListener('click', ev => {
-
-				data[ev.target.getAttribute('data-serialNumber')].createModal();
-
-			})
-		})
-	}
 
 	document.querySelector('.modal').addEventListener('click', ev => {
 		if (ev.target.classList.contains('modal__button') || ev.target.classList.contains('modal__button_price') || ev.target.classList.contains('modal__button_flare')) {
@@ -498,7 +587,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 				cartArray.push(dataId);
 
-				(0,_modules_cart_item__WEBPACK_IMPORTED_MODULE_3__["default"])(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
+				(0,_modules_cartItem__WEBPACK_IMPORTED_MODULE_3__["default"])(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
 
 			} else {
 				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
@@ -510,30 +599,12 @@ window.addEventListener('DOMContentLoaded', () => {
 				}
 			}
 
-			calculateTotalPrice();
+			(0,_modules_total__WEBPACK_IMPORTED_MODULE_6__.calculateTotalPrice)();
 			cartCount++;
-			refreshCartCount();
-			setTimeout(() => hideModal(document.querySelector('.modal')), 100)
+			(0,_modules_total__WEBPACK_IMPORTED_MODULE_6__.refreshCartCount)();
+			setTimeout(() => (0,_modules_modal__WEBPACK_IMPORTED_MODULE_4__.hideModal)(document.querySelector('.modal')), 100)
 		}
 	})
-
-
-	function calculateTotalPrice() {
-		document.querySelectorAll('.cart__item_price').forEach(el => {
-			el = +el.innerHTML.slice(0, -5);
-			priceArr.push(el);
-		})
-		document.querySelectorAll('.total-price').forEach(el => {
-			el.innerHTML = priceArr.reduce((sum, current) => sum + current, 0).toFixed(2) + ' руб.';
-		})
-		priceArr = [];
-	}
-
-	function refreshCartCount() {
-		document.querySelectorAll('.cart-count').forEach(el => {
-			el.innerHTML = cartCount;
-		})
-	}
 
 	fetch('db.json')
 		.then((response) => response.json())
@@ -561,44 +632,11 @@ window.addEventListener('DOMContentLoaded', () => {
 
 		})
 		.then((data) => {
-			callCreateModal('.pizza__item_btn', data);
-			callCreateModal('.pizza__item_img', data);
+			(0,_modules_modal__WEBPACK_IMPORTED_MODULE_4__.callCreateModal)('.pizza__item_btn', data);
+			(0,_modules_modal__WEBPACK_IMPORTED_MODULE_4__.callCreateModal)('.pizza__item_img', data);
 		});
 
 
-	const
-		cart = document.querySelector('.cart'),
-		cartContainer = document.querySelector('.cart__container'),
-		cartButton = document.querySelectorAll('.cart-button');
-
-	cartButton.forEach(el => {
-		el.addEventListener('click', () => {
-			cart.classList.add('flexShow', 'fade');
-			cart.classList.remove('hide');
-			cart.style.height = '100vh';
-			document.body.style.overflow = 'hidden';
-			setTimeout(() => cartContainer.style.transform = 'translate(0rem)', 100);
-		})
-	})
-
-	function callCartClose() {
-		cartContainer.style.transform = 'translate(45rem)'
-		cart.classList.add('hide');
-		cart.classList.remove('flexShow', 'fade');
-		document.body.style.overflow = '';
-	}
-
-	cart.addEventListener('click', ev => {
-		if (ev.target.classList.contains('cart__close') || ev.target == cart) {
-			callCartClose()
-		}
-	})
-
-	document.addEventListener('keydown', (ev) => {
-		if (ev.code == "Escape" && getComputedStyle(cart).display == 'flex') {
-			callCartClose();
-		}
-	});
 
 })
 })();

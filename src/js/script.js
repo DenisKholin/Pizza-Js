@@ -1,13 +1,16 @@
 import Header from "./modules/header";
 import Slider from "./modules/slider";
 import pizzaCard from "./modules/pizzaCard";
-import createCartItem from "./modules/cart-item";
-import Modal from "./modules/modal";
+import createCartItem from "./modules/cartItem";
+import Modal, { hideModal, callCreateModal } from "./modules/modal";
+import cart from "./modules/cart";
+import { calculateTotalPrice, refreshCartCount } from "./modules/total";
 
 window.addEventListener('DOMContentLoaded', () => {
 
 	Header();
 	Slider();
+	cart();
 
 	let
 		cartCount = 0,
@@ -15,18 +18,6 @@ window.addEventListener('DOMContentLoaded', () => {
 		arrOfId = [];
 	const
 		cartArray = [];
-
-	if (JSON.parse(localStorage.getItem('arrOfId')) && JSON.parse(localStorage.getItem('arrOfId')).length != 0) {
-		arrOfId = JSON.parse(localStorage.getItem('arrOfId'));
-	}
-
-
-	function hideModal(modalSelector) {
-		modalSelector.classList.remove('flexShow', 'fade');
-		modalSelector.classList.add('hide');
-		document.body.style.overflow = '';
-	}
-
 
 	const checkNotEmpty = (obj) => {
 		const vals = Object.keys(obj).map(key => obj[key]);
@@ -37,16 +28,6 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	}
 
-
-	function callCreateModal(clickTrigger, data) {
-		document.querySelectorAll(clickTrigger).forEach(el => {
-			el.addEventListener('click', ev => {
-
-				data[ev.target.getAttribute('data-serialNumber')].createModal();
-
-			})
-		})
-	}
 
 	document.querySelector('.modal').addEventListener('click', ev => {
 		if (ev.target.classList.contains('modal__button') || ev.target.classList.contains('modal__button_price') || ev.target.classList.contains('modal__button_flare')) {
@@ -91,24 +72,6 @@ window.addEventListener('DOMContentLoaded', () => {
 		}
 	})
 
-
-	function calculateTotalPrice() {
-		document.querySelectorAll('.cart__item_price').forEach(el => {
-			el = +el.innerHTML.slice(0, -5);
-			priceArr.push(el);
-		})
-		document.querySelectorAll('.total-price').forEach(el => {
-			el.innerHTML = priceArr.reduce((sum, current) => sum + current, 0).toFixed(2) + ' руб.';
-		})
-		priceArr = [];
-	}
-
-	function refreshCartCount() {
-		document.querySelectorAll('.cart-count').forEach(el => {
-			el.innerHTML = cartCount;
-		})
-	}
-
 	fetch('db.json')
 		.then((response) => response.json())
 		.then((data) => {
@@ -140,38 +103,5 @@ window.addEventListener('DOMContentLoaded', () => {
 		});
 
 
-	const
-		cart = document.querySelector('.cart'),
-		cartContainer = document.querySelector('.cart__container'),
-		cartButton = document.querySelectorAll('.cart-button');
-
-	cartButton.forEach(el => {
-		el.addEventListener('click', () => {
-			cart.classList.add('flexShow', 'fade');
-			cart.classList.remove('hide');
-			cart.style.height = '100vh';
-			document.body.style.overflow = 'hidden';
-			setTimeout(() => cartContainer.style.transform = 'translate(0rem)', 100);
-		})
-	})
-
-	function callCartClose() {
-		cartContainer.style.transform = 'translate(45rem)'
-		cart.classList.add('hide');
-		cart.classList.remove('flexShow', 'fade');
-		document.body.style.overflow = '';
-	}
-
-	cart.addEventListener('click', ev => {
-		if (ev.target.classList.contains('cart__close') || ev.target == cart) {
-			callCartClose()
-		}
-	})
-
-	document.addEventListener('keydown', (ev) => {
-		if (ev.code == "Escape" && getComputedStyle(cart).display == 'flex') {
-			callCartClose();
-		}
-	});
 
 })
