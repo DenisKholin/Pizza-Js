@@ -1,6 +1,6 @@
 import Header from "./modules/header";
 import Slider from "./modules/slider";
-import PizzaCard from "./modules/pizza-cart";
+import PizzaCard from "./modules/renderClasses/pizza-cart";
 import createCartItem from "./modules/cart-item";
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -126,12 +126,15 @@ window.addEventListener('DOMContentLoaded', () => {
 				++serialNumber;
 
 			})
+
+			pizzaArray.forEach(el => el.addPizzaCard())
+
 			return pizzaArray;
+
 		})
 		.then((data) => {
 			callCreateModal('.pizza__item_btn', data);
 			callCreateModal('.pizza__item_img', data);
-			return data;
 		});
 
 

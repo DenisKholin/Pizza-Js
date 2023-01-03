@@ -98,10 +98,6 @@ function deleteCartItem(cartItem, dataId, currentCount) {
 		cartCount = cartCount - +currentCount.innerHTML;
 		refreshCartCount()
 		cartArray.splice(cartArray.indexOf(dataId), 1);
-		localStorage.removeItem(`pizza-${dataId}`);
-		localStorage.setItem('countOfCards', +cartCount + 1);
-		localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
-		localStorage.setItem('arrOfId', JSON.stringify(cartArray));
 	})
 	cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
 		toggleCartItemDelete(cartItem, 0, -2);
@@ -145,17 +141,17 @@ const Header = () => {
 
 /***/ }),
 
-/***/ "./src/js/modules/pizza-cart.js":
-/*!**************************************!*\
-  !*** ./src/js/modules/pizza-cart.js ***!
-  \**************************************/
+/***/ "./src/js/modules/renderClasses/mainClass.js":
+/*!***************************************************!*\
+  !*** ./src/js/modules/renderClasses/mainClass.js ***!
+  \***************************************************/
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (/* binding */ PizzaCard)
+/* harmony export */   "default": () => (/* binding */ MainClass)
 /* harmony export */ });
-class PizzaCard {
+class MainClass {
 	constructor(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber) {
 		this.pizzaName = pizzaName;
 		this.img = img;
@@ -175,7 +171,27 @@ class PizzaCard {
 		this.bigWeight = bigWeight;
 		this.id = id;
 		this.serialNumber = serialNumber;
-		this.addPizzaCard();
+	}
+}
+
+/***/ }),
+
+/***/ "./src/js/modules/renderClasses/pizza-cart.js":
+/*!****************************************************!*\
+  !*** ./src/js/modules/renderClasses/pizza-cart.js ***!
+  \****************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ PizzaCard)
+/* harmony export */ });
+/* harmony import */ var _mainClass__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./mainClass */ "./src/js/modules/renderClasses/mainClass.js");
+
+
+class PizzaCard extends _mainClass__WEBPACK_IMPORTED_MODULE_0__["default"] {
+	constructor(...args) {
+		super(...args);
 	}
 
 	addPizzaCard() {
@@ -410,7 +426,7 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_header__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/header */ "./src/js/modules/header.js");
 /* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js");
-/* harmony import */ var _modules_pizza_cart__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/pizza-cart */ "./src/js/modules/pizza-cart.js");
+/* harmony import */ var _modules_renderClasses_pizza_cart__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/renderClasses/pizza-cart */ "./src/js/modules/renderClasses/pizza-cart.js");
 /* harmony import */ var _modules_cart_item__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/cart-item */ "./src/js/modules/cart-item.js");
 
 
@@ -487,8 +503,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 				(0,_modules_cart_item__WEBPACK_IMPORTED_MODULE_3__["default"])(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
 
-				updateLocalStorage(currentTitle, currentSize, currentWeight, 1, currentPrice, currentSrc, dataId, currentAlt)
-
 			} else {
 				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
 
@@ -496,8 +510,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 					currentItemCount.innerHTML++;
 					document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
-
-					updateLocalStorage(currentTitle, currentSize, currentWeight, currentItemCount.innerHTML, (currentPrice * currentItemCount.innerHTML).toFixed(2), currentSrc, dataId, currentAlt)
 				}
 			}
 
@@ -538,37 +550,23 @@ window.addEventListener('DOMContentLoaded', () => {
 				const { pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id } = elem;
 
 				if (checkNotEmpty(elem)) {
-					pizzaArray.push(new _modules_pizza_cart__WEBPACK_IMPORTED_MODULE_2__["default"](pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
+					pizzaArray.push(new _modules_renderClasses_pizza_cart__WEBPACK_IMPORTED_MODULE_2__["default"](pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
 				}
 
 				++serialNumber;
 
 			})
+
+			pizzaArray.forEach(el => el.addPizzaCard())
+
 			return pizzaArray;
+
 		})
 		.then((data) => {
 			callCreateModal('.pizza__item_btn', data);
 			callCreateModal('.pizza__item_img', data);
-			return data;
-		})
-		.then(() => {
-			if (localStorage.getItem('totalPrice')) {
-
-				cartCount = localStorage.getItem('countOfCards');
-				countOfCartsInCard = JSON.parse(localStorage.getItem('arrOfId')).length;
-
-				for (let i = 0; i < countOfCartsInCard; i++) {
-
-					let json = JSON.parse(localStorage.getItem(`pizza-${JSON.parse(localStorage.getItem('arrOfId'))[i]}`));
-
-					cartArray.push(json.dataId)
-					;(0,_modules_cart_item__WEBPACK_IMPORTED_MODULE_3__["default"])(json.src, json.size, json.weight, json.price, json.count, json.dataId, json.alt, json.name);
-				}
-
-				calculateTotalPrice();
-				refreshCartCount();
-			}
 		});
+
 
 	const
 		cart = document.querySelector('.cart'),
@@ -603,43 +601,6 @@ window.addEventListener('DOMContentLoaded', () => {
 			callCartClose();
 		}
 	});
-
-	function updateLocalStorage(pizzaName, size, weight, count, price, src, dataId, alt) {
-		calculateTotalPrice();
-		refreshCartCount();
-		localStorage.setItem(`pizza-${dataId}`, JSON.stringify({
-			name: pizzaName,
-			size: size,
-			weight: weight,
-			count: count,
-			price: price,
-			src: src,
-			dataId: dataId,
-			alt: alt
-		}));
-		localStorage.setItem('countOfCards', +cartCount + 1);
-
-		if (!arrOfId.includes(dataId)) {
-			// arrOfId.push(dataId);
-			localStorage.setItem('arrOfId', JSON.stringify(cartArray));
-		}
-
-		localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
-	}
-
-	// document.querySelector('.cart__total_button').addEventListener('click', () => {
-	// 	localStorage.clear();
-
-	// 	if (document.querySelector('.cart-count').innerHTML != 0) {
-	// 		document.querySelectorAll('.cart__item').forEach((el, index) => {
-
-	// 		})
-
-	// 		localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
-
-	// 	}
-	// })
-
 
 })
 })();
