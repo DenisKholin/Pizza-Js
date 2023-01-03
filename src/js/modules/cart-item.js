@@ -84,10 +84,6 @@ function deleteCartItem(cartItem, dataId, currentCount) {
 		cartCount = cartCount - +currentCount.innerHTML;
 		refreshCartCount()
 		cartArray.splice(cartArray.indexOf(dataId), 1);
-		localStorage.removeItem(`pizza-${dataId}`);
-		localStorage.setItem('countOfCards', +cartCount + 1);
-		localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
-		localStorage.setItem('arrOfId', JSON.stringify(cartArray));
 	})
 	cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
 		toggleCartItemDelete(cartItem, 0, -2);

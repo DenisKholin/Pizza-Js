@@ -73,8 +73,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 				createCartItem(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
 
-				updateLocalStorage(currentTitle, currentSize, currentWeight, 1, currentPrice, currentSrc, dataId, currentAlt)
-
 			} else {
 				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
 
@@ -82,8 +80,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 					currentItemCount.innerHTML++;
 					document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
-
-					updateLocalStorage(currentTitle, currentSize, currentWeight, currentItemCount.innerHTML, (currentPrice * currentItemCount.innerHTML).toFixed(2), currentSrc, dataId, currentAlt)
 				}
 			}
 
@@ -136,25 +132,8 @@ window.addEventListener('DOMContentLoaded', () => {
 			callCreateModal('.pizza__item_btn', data);
 			callCreateModal('.pizza__item_img', data);
 			return data;
-		})
-		.then(() => {
-			if (localStorage.getItem('totalPrice')) {
-
-				cartCount = localStorage.getItem('countOfCards');
-				countOfCartsInCard = JSON.parse(localStorage.getItem('arrOfId')).length;
-
-				for (let i = 0; i < countOfCartsInCard; i++) {
-
-					let json = JSON.parse(localStorage.getItem(`pizza-${JSON.parse(localStorage.getItem('arrOfId'))[i]}`));
-
-					cartArray.push(json.dataId)
-					createCartItem(json.src, json.size, json.weight, json.price, json.count, json.dataId, json.alt, json.name);
-				}
-
-				calculateTotalPrice();
-				refreshCartCount();
-			}
 		});
+
 
 	const
 		cart = document.querySelector('.cart'),
@@ -189,42 +168,5 @@ window.addEventListener('DOMContentLoaded', () => {
 			callCartClose();
 		}
 	});
-
-	function updateLocalStorage(pizzaName, size, weight, count, price, src, dataId, alt) {
-		calculateTotalPrice();
-		refreshCartCount();
-		localStorage.setItem(`pizza-${dataId}`, JSON.stringify({
-			name: pizzaName,
-			size: size,
-			weight: weight,
-			count: count,
-			price: price,
-			src: src,
-			dataId: dataId,
-			alt: alt
-		}));
-		localStorage.setItem('countOfCards', +cartCount + 1);
-
-		if (!arrOfId.includes(dataId)) {
-			// arrOfId.push(dataId);
-			localStorage.setItem('arrOfId', JSON.stringify(cartArray));
-		}
-
-		localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
-	}
-
-	// document.querySelector('.cart__total_button').addEventListener('click', () => {
-	// 	localStorage.clear();
-
-	// 	if (document.querySelector('.cart-count').innerHTML != 0) {
-	// 		document.querySelectorAll('.cart__item').forEach((el, index) => {
-
-	// 		})
-
-	// 		localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
-
-	// 	}
-	// })
-
 
 })
