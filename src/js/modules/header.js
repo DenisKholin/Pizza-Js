@@ -1,4 +1,4 @@
-function header() {
+const Header = () => {
 	const headerTop = document.querySelector('.header__top');
 
 	window.addEventListener('scroll', () => {
@@ -12,4 +12,4 @@ function header() {
 	})
 }
 
-export default header;
+export default Header;

@@ -2,6 +2,121 @@
 /******/ 	"use strict";
 /******/ 	var __webpack_modules__ = ({
 
+/***/ "./src/js/modules/cart-item.js":
+/*!*************************************!*\
+  !*** ./src/js/modules/cart-item.js ***!
+  \*************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName) {
+	const cartItem = document.createElement('div');
+	cartItem.classList.add('cart__item');
+	cartItem.setAttribute('data-id', dataId);
+
+	cartItem.innerHTML = `
+		<div class="cart__item_info">
+			<img src="${src}" alt="${alt}" class="cart__item_img">
+			<div class="cart__item_text">
+				<p class="cart__item_title">${pizzaName}</p>
+				<p class="cart__item_description">
+					<span class="modal__description_size">${size}</span>
+					, традиционное тесто,
+					<span class="modal__description_weight">${weight}</span>
+					г
+				</p>
+			</div>
+			<p class="cart__item_close">&times;</p>
+		</div>
+		<div class="cart__item_line"></div>
+		<div class="cart__item_control">
+			<p class="cart__item_price">${price} руб.</p>
+			<div class="cart__item_panel">
+				<button class="cart__item_minus cart__item_button" type="button">-</button>
+				<p class="cart__item_count">${count}</p>
+				<button class="cart__item_plus cart__item_button" type="button">+</button>
+			</div>
+		</div>
+		<div class="cart__item_delete">
+			<p class="cart__delete_text">Хотите удалить из корзины?</p>
+			<div class="cart__delete">
+				<button type="button" class="cart__delete_yes cart__delete_button">Да</button>
+				<button type="button" class="cart__delete_no cart__delete_button">Нет</button>
+			</div>
+		</div>
+	`
+
+	document.querySelector('.cart__product').append(cartItem);
+
+	const
+		cartItemCount = cartItem.querySelector('.cart__item_count'),
+		cartItemPrice = cartItem.querySelector('.cart__item_price'),
+		priceOfOne = +cartItem.querySelector('.cart__item_price').innerHTML.slice(0, -5);
+
+	cartItem.querySelector('.cart__item_plus').addEventListener('click', () => {
+		cartItemCount.innerHTML++;
+
+		cartCount++;
+		updateLocalStorage(pizzaName, size, weight, cartItemCount.innerHTML, (priceOfOne * cartItemCount.innerHTML).toFixed(2), src, dataId, alt);
+		refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
+
+
+	})
+
+	cartItem.querySelector('.cart__item_minus').addEventListener('click', () => {
+		if (+cartItemCount.innerHTML <= 1) {
+			deleteCartItem(cartItem, dataId, cartItemCount);
+		} else {
+			cartItemCount.innerHTML--;
+			cartCount--;
+			refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
+
+			updateLocalStorage(pizzaName, size, weight, cartItemCount.innerHTML, (priceOfOne * cartItemCount.innerHTML).toFixed(2), src, dataId, alt);
+		}
+	})
+
+	cartItem.querySelector('.cart__item_close').addEventListener('click', () => {
+		deleteCartItem(cartItem, dataId, cartItemCount);
+	})
+}
+
+function refreshCartitem(price, priceOfOne, count) {
+	price.innerHTML = ((priceOfOne * count.innerHTML).toFixed(2)) + ' руб.';
+	refreshCartCount()
+	calculateTotalPrice();
+}
+
+function deleteCartItem(cartItem, dataId, currentCount) {
+	toggleCartItemDelete(cartItem, 1, 2);
+
+	cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
+		cartItem.remove();
+		calculateTotalPrice();
+		cartCount = cartCount - +currentCount.innerHTML;
+		refreshCartCount()
+		cartArray.splice(cartArray.indexOf(dataId), 1);
+		localStorage.removeItem(`pizza-${dataId}`);
+		localStorage.setItem('countOfCards', +cartCount + 1);
+		localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
+		localStorage.setItem('arrOfId', JSON.stringify(cartArray));
+	})
+	cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
+		toggleCartItemDelete(cartItem, 0, -2);
+	})
+}
+
+function toggleCartItemDelete(cartItem, opacity, zIndex) {
+	cartItem.querySelector('.cart__item_delete').style.opacity = opacity;
+	cartItem.querySelector('.cart__item_delete').style.zIndex = zIndex;
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (createCartItem);
+
+/***/ }),
+
 /***/ "./src/js/modules/header.js":
 /*!**********************************!*\
   !*** ./src/js/modules/header.js ***!
@@ -12,7 +127,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-function header() {
+const Header = () => {
 	const headerTop = document.querySelector('.header__top');
 
 	window.addEventListener('scroll', () => {
@@ -26,7 +141,148 @@ function header() {
 	})
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (header);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Header);
+
+/***/ }),
+
+/***/ "./src/js/modules/pizza-cart.js":
+/*!**************************************!*\
+  !*** ./src/js/modules/pizza-cart.js ***!
+  \**************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (/* binding */ PizzaCard)
+/* harmony export */ });
+class PizzaCard {
+	constructor(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber) {
+		this.pizzaName = pizzaName;
+		this.img = img;
+		this.alt = alt;
+		this.price = price;
+		this.ingridient = ingridient;
+		this.dataIngridient = dataIngridient;
+		this.smallImg = smallImg;
+		this.bigImg = bigImg;
+		this.smallPrice = smallPrice;
+		this.bigPrice = bigPrice;
+		this.size = size;
+		this.smallSize = smallSize;
+		this.bigSize = bigSize;
+		this.weight = weight;
+		this.smallWeight = smallWeight;
+		this.bigWeight = bigWeight;
+		this.id = id;
+		this.serialNumber = serialNumber;
+		this.addPizzaCard();
+	}
+
+	addPizzaCard() {
+		const pizzaItem = document.createElement('div');
+		pizzaItem.classList.add('pizza__item');
+		pizzaItem.setAttribute('data-ingridient', this.dataIngridient);
+		pizzaItem.setAttribute('data-id', this.id);
+
+		pizzaItem.innerHTML = `
+				<img src="${this.img}" alt="${this.alt}" data-serialNumber="${this.serialNumber}" class="pizza__item_img">
+				<p class="pizza__item_name">${this.pizzaName}</p>
+				<p class="pizza__item_ingridient">${this.ingridient}</p>
+				<div class="pizza__item_control">
+					<p class="pizza__item_price">от ${this.smallPrice} руб.</p>
+					<button data-serialNumber="${this.serialNumber}" class="pizza__item_btn">Выбрать</button>
+				</div>
+			`;
+
+		document.querySelector('.pizza__container').append(pizzaItem);
+	}
+
+	createModal() {
+		const
+			modal = document.querySelector('.modal'),
+			modalContent = document.createElement('div'),
+			modalDialog = document.querySelector('.modal__dialog');
+
+		modalContent.classList.add('modal__content');
+		modalContent.setAttribute('data-id', `${this.id}`);
+
+		modal.classList.remove('hide');
+		modal.classList.add('flexShow', 'fade');
+
+		modalDialog.innerHTML = '';
+		modalDialog.append(modalContent);
+
+		document.body.style.overflow = 'hidden';
+
+		modalContent.innerHTML = `
+				<div class="modal__close">&times;</div>
+				<div class="modal__pizza">
+					<img src="${this.img}" alt="${this.alt}" class="modal__pizza_img">
+				</div>
+				<div class="modal__info">
+					<div class="modal__info_content">
+						<p class="modal__name">${this.pizzaName}</p>
+						<p class="modal__description">
+							<span class="modal__description_size">${this.size}</span> 
+							, традиционное тесто, 
+							<span class="modal__description_weight">${this.weight}</span> 
+							г
+						</p>
+						<p class="modal__ingridient">${this.ingridient}</p>
+						<div class="modal__switch">
+							<input type="radio" name="size${this.id}" id="small${this.id}" class="modal__radio modal__radio_small" value="small">
+							<label for="small${this.id}" class="modal__label">Маленькая</label>
+
+							<input type="radio" name="size${this.id}" id="medium${this.id}" class="modal__radio modal__radio_medium" value="medium" checked>
+							<label for="medium${this.id}" class="modal__label">Средняя</label>
+
+							<input type="radio" name="size${this.id}" id="big${this.id}" class="modal__radio modal__radio_big" value="big">
+							<label for="big${this.id}" class="modal__label">Большая</label>
+						</div>
+					</div>
+					<button class="modal__button" type="button" data-serialNumber="${this.serialNumber}">
+					Добавить в корзину за 
+					<span class="modal__button_price">${this.price}</span> 
+					руб.
+					<span class="modal__button_flare"></span>
+					</button>
+				</div>
+			`;
+
+		const modalPizzaImg = modalContent.querySelector('.modal__pizza_img');
+
+		document.addEventListener('keydown', (ev) => {
+			if (ev.code == "Escape" && getComputedStyle(modal).display == 'flex') {
+				hideModal(modal);
+			}
+		});
+
+		modal.addEventListener('click', (ev) => {
+			if (ev.target.classList.contains('modal__close') || ev.target == modal) {
+				hideModal(modal);
+			}
+
+			this.switchPizza('modal__radio_small', this.smallImg, 0.8, modalPizzaImg, this.smallSize, this.smallWeight, this.smallPrice, ev)
+
+			this.switchPizza('modal__radio_medium', this.img, 1, modalPizzaImg, this.size, this.weight, this.price, ev)
+
+			this.switchPizza('modal__radio_big', this.bigImg, 1.2, modalPizzaImg, this.bigSize, this.bigWeight, this.bigPrice, ev)
+
+		})
+
+	}
+
+	switchPizza(radioSelector, pizzaImg, scaleValue, modalPizzaImg, size, weight, price, ev) {
+		if (ev.target.classList.contains(radioSelector)) {
+			modalPizzaImg.setAttribute('src', pizzaImg);
+			modalPizzaImg.style.transform = `scale(${scaleValue})`;
+			document.querySelector('.modal__description_size').innerHTML = size;
+			document.querySelector('.modal__description_weight').innerHTML = weight;
+			document.querySelector('.modal__button_price').innerHTML = price;
+		}
+	}
+
+}
 
 /***/ }),
 
@@ -40,7 +296,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-const slider = () => {
+const Slider = () => {
 	const
 		slides = document.querySelectorAll('.slider__item'),
 		prevSlide = document.querySelector('.slider__prev'),
@@ -85,7 +341,7 @@ const slider = () => {
 
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (slider);
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (Slider);
 
 /***/ })
 
@@ -154,6 +410,10 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_header__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/header */ "./src/js/modules/header.js");
 /* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js");
+/* harmony import */ var _modules_pizza_cart__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/pizza-cart */ "./src/js/modules/pizza-cart.js");
+/* harmony import */ var _modules_cart_item__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/cart-item */ "./src/js/modules/cart-item.js");
+
+
 
 
 
@@ -161,16 +421,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	(0,_modules_header__WEBPACK_IMPORTED_MODULE_0__["default"])();
 	(0,_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])();
-
-	//********************************************************************/
-	//SLIDER
-	//********************************************************************/
-
-
-	//********************************************************************/
-	//CARDS+MODAL
-	//********************************************************************/
-
 
 	let
 		cartCount = 0,
@@ -181,135 +431,6 @@ window.addEventListener('DOMContentLoaded', () => {
 
 	if (JSON.parse(localStorage.getItem('arrOfId')) && JSON.parse(localStorage.getItem('arrOfId')).length != 0) {
 		arrOfId = JSON.parse(localStorage.getItem('arrOfId'));
-	}
-
-	class PizzaCard {
-		constructor(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber) {
-			this.pizzaName = pizzaName;
-			this.img = img;
-			this.alt = alt;
-			this.price = price;
-			this.ingridient = ingridient;
-			this.dataIngridient = dataIngridient;
-			this.smallImg = smallImg;
-			this.bigImg = bigImg;
-			this.smallPrice = smallPrice;
-			this.bigPrice = bigPrice;
-			this.size = size;
-			this.smallSize = smallSize;
-			this.bigSize = bigSize;
-			this.weight = weight;
-			this.smallWeight = smallWeight;
-			this.bigWeight = bigWeight;
-			this.id = id;
-			this.serialNumber = serialNumber;
-			this.addPizzaCard();
-		}
-
-		addPizzaCard() {
-			const pizzaItem = document.createElement('div');
-			pizzaItem.classList.add('pizza__item');
-			pizzaItem.setAttribute('data-ingridient', this.dataIngridient);
-			pizzaItem.setAttribute('data-id', this.id);
-
-			pizzaItem.innerHTML = `
-					<img src="${this.img}" alt="${this.alt}" data-serialNumber="${this.serialNumber}" class="pizza__item_img">
-					<p class="pizza__item_name">${this.pizzaName}</p>
-					<p class="pizza__item_ingridient">${this.ingridient}</p>
-					<div class="pizza__item_control">
-						<p class="pizza__item_price">от ${this.smallPrice} руб.</p>
-						<button data-serialNumber="${this.serialNumber}" class="pizza__item_btn">Выбрать</button>
-					</div>
-				`;
-
-			document.querySelector('.pizza__container').append(pizzaItem);
-		}
-
-		createModal() {
-			const
-				modal = document.querySelector('.modal'),
-				modalContent = document.createElement('div'),
-				modalDialog = document.querySelector('.modal__dialog');
-
-			modalContent.classList.add('modal__content');
-			modalContent.setAttribute('data-id', `${this.id}`);
-
-			modal.classList.remove('hide');
-			modal.classList.add('flexShow', 'fade');
-
-			modalDialog.innerHTML = '';
-			modalDialog.append(modalContent);
-
-			document.body.style.overflow = 'hidden';
-
-			modalContent.innerHTML = `
-					<div class="modal__close">&times;</div>
-					<div class="modal__pizza">
-						<img src="${this.img}" alt="${this.alt}" class="modal__pizza_img">
-					</div>
-					<div class="modal__info">
-						<div class="modal__info_content">
-							<p class="modal__name">${this.pizzaName}</p>
-							<p class="modal__description">
-								<span class="modal__description_size">${this.size}</span> 
-								, традиционное тесто, 
-								<span class="modal__description_weight">${this.weight}</span> 
-								г
-							</p>
-							<p class="modal__ingridient">${this.ingridient}</p>
-							<div class="modal__switch">
-								<input type="radio" name="size${this.id}" id="small${this.id}" class="modal__radio modal__radio_small" value="small">
-								<label for="small${this.id}" class="modal__label">Маленькая</label>
-	
-								<input type="radio" name="size${this.id}" id="medium${this.id}" class="modal__radio modal__radio_medium" value="medium" checked>
-								<label for="medium${this.id}" class="modal__label">Средняя</label>
-	
-								<input type="radio" name="size${this.id}" id="big${this.id}" class="modal__radio modal__radio_big" value="big">
-								<label for="big${this.id}" class="modal__label">Большая</label>
-							</div>
-						</div>
-						<button class="modal__button" type="button" data-serialNumber="${this.serialNumber}">
-						Добавить в корзину за 
-						<span class="modal__button_price">${this.price}</span> 
-						руб.
-						<span class="modal__button_flare"></span>
-						</button>
-					</div>
-				`;
-
-			const modalPizzaImg = modalContent.querySelector('.modal__pizza_img');
-
-			document.addEventListener('keydown', (ev) => {
-				if (ev.code == "Escape" && getComputedStyle(modal).display == 'flex') {
-					hideModal(modal);
-				}
-			});
-
-			modal.addEventListener('click', (ev) => {
-				if (ev.target.classList.contains('modal__close') || ev.target == modal) {
-					hideModal(modal);
-				}
-
-				this.switchPizza('modal__radio_small', this.smallImg, 0.8, modalPizzaImg, this.smallSize, this.smallWeight, this.smallPrice, ev)
-
-				this.switchPizza('modal__radio_medium', this.img, 1, modalPizzaImg, this.size, this.weight, this.price, ev)
-
-				this.switchPizza('modal__radio_big', this.bigImg, 1.2, modalPizzaImg, this.bigSize, this.bigWeight, this.bigPrice, ev)
-
-			})
-
-		}
-
-		switchPizza(radioSelector, pizzaImg, scaleValue, modalPizzaImg, size, weight, price, ev) {
-			if (ev.target.classList.contains(radioSelector)) {
-				modalPizzaImg.setAttribute('src', pizzaImg);
-				modalPizzaImg.style.transform = `scale(${scaleValue})`;
-				document.querySelector('.modal__description_size').innerHTML = size;
-				document.querySelector('.modal__description_weight').innerHTML = weight;
-				document.querySelector('.modal__button_price').innerHTML = price;
-			}
-		}
-
 	}
 
 
@@ -327,107 +448,6 @@ window.addEventListener('DOMContentLoaded', () => {
 		} else {
 			return true;
 		}
-	}
-
-	function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName) {
-		const cartItem = document.createElement('div');
-		cartItem.classList.add('cart__item');
-		cartItem.setAttribute('data-id', dataId);
-
-		cartItem.innerHTML = `
-			<div class="cart__item_info">
-				<img src="${src}" alt="${alt}" class="cart__item_img">
-				<div class="cart__item_text">
-					<p class="cart__item_title">${pizzaName}</p>
-					<p class="cart__item_description">
-						<span class="modal__description_size">${size}</span>
-						, традиционное тесто,
-						<span class="modal__description_weight">${weight}</span>
-						г
-					</p>
-				</div>
-				<p class="cart__item_close">&times;</p>
-			</div>
-			<div class="cart__item_line"></div>
-			<div class="cart__item_control">
-				<p class="cart__item_price">${price} руб.</p>
-				<div class="cart__item_panel">
-					<button class="cart__item_minus cart__item_button" type="button">-</button>
-					<p class="cart__item_count">${count}</p>
-					<button class="cart__item_plus cart__item_button" type="button">+</button>
-				</div>
-			</div>
-			<div class="cart__item_delete">
-				<p class="cart__delete_text">Хотите удалить из корзины?</p>
-				<div class="cart__delete">
-					<button type="button" class="cart__delete_yes cart__delete_button">Да</button>
-					<button type="button" class="cart__delete_no cart__delete_button">Нет</button>
-				</div>
-			</div>
-		`
-
-		document.querySelector('.cart__product').append(cartItem);
-
-		const
-			cartItemCount = cartItem.querySelector('.cart__item_count'),
-			cartItemPrice = cartItem.querySelector('.cart__item_price'),
-			priceOfOne = +cartItem.querySelector('.cart__item_price').innerHTML.slice(0, -5);
-
-		cartItem.querySelector('.cart__item_plus').addEventListener('click', () => {
-			cartItemCount.innerHTML++;
-
-			cartCount++;
-			updateLocalStorage(pizzaName, size, weight, cartItemCount.innerHTML, (priceOfOne * cartItemCount.innerHTML).toFixed(2), src, dataId, alt);
-			refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
-
-
-		})
-
-		cartItem.querySelector('.cart__item_minus').addEventListener('click', () => {
-			if (+cartItemCount.innerHTML <= 1) {
-				deleteCartItem(cartItem, dataId, cartItemCount);
-			} else {
-				cartItemCount.innerHTML--;
-				cartCount--;
-				refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
-
-				updateLocalStorage(pizzaName, size, weight, cartItemCount.innerHTML, (priceOfOne * cartItemCount.innerHTML).toFixed(2), src, dataId, alt);
-			}
-		})
-
-		cartItem.querySelector('.cart__item_close').addEventListener('click', () => {
-			deleteCartItem(cartItem, dataId, cartItemCount);
-		})
-	}
-
-	function refreshCartitem(price, priceOfOne, count) {
-		price.innerHTML = ((priceOfOne * count.innerHTML).toFixed(2)) + ' руб.';
-		refreshCartCount()
-		calculateTotalPrice();
-	}
-
-	function deleteCartItem(cartItem, dataId, currentCount) {
-		toggleCartItemDelete(cartItem, 1, 2);
-
-		cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
-			cartItem.remove();
-			calculateTotalPrice();
-			cartCount = cartCount - +currentCount.innerHTML;
-			refreshCartCount()
-			cartArray.splice(cartArray.indexOf(dataId), 1);
-			localStorage.removeItem(`pizza-${dataId}`);
-			localStorage.setItem('countOfCards', +cartCount + 1);
-			localStorage.setItem('totalPrice', document.querySelector('.total-price').innerHTML)
-			localStorage.setItem('arrOfId', JSON.stringify(cartArray));
-		})
-		cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
-			toggleCartItemDelete(cartItem, 0, -2);
-		})
-	}
-
-	function toggleCartItemDelete(cartItem, opacity, zIndex) {
-		cartItem.querySelector('.cart__item_delete').style.opacity = opacity;
-		cartItem.querySelector('.cart__item_delete').style.zIndex = zIndex;
 	}
 
 
@@ -465,7 +485,7 @@ window.addEventListener('DOMContentLoaded', () => {
 
 				cartArray.push(dataId);
 
-				createCartItem(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
+				(0,_modules_cart_item__WEBPACK_IMPORTED_MODULE_3__["default"])(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
 
 				updateLocalStorage(currentTitle, currentSize, currentWeight, 1, currentPrice, currentSrc, dataId, currentAlt)
 
@@ -518,7 +538,7 @@ window.addEventListener('DOMContentLoaded', () => {
 				const { pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id } = elem;
 
 				if (checkNotEmpty(elem)) {
-					pizzaArray.push(new PizzaCard(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
+					pizzaArray.push(new _modules_pizza_cart__WEBPACK_IMPORTED_MODULE_2__["default"](pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
 				}
 
 				++serialNumber;
@@ -542,7 +562,7 @@ window.addEventListener('DOMContentLoaded', () => {
 					let json = JSON.parse(localStorage.getItem(`pizza-${JSON.parse(localStorage.getItem('arrOfId'))[i]}`));
 
 					cartArray.push(json.dataId)
-					createCartItem(json.src, json.size, json.weight, json.price, json.count, json.dataId, json.alt, json.name);
+					;(0,_modules_cart_item__WEBPACK_IMPORTED_MODULE_3__["default"])(json.src, json.size, json.weight, json.price, json.count, json.dataId, json.alt, json.name);
 				}
 
 				calculateTotalPrice();

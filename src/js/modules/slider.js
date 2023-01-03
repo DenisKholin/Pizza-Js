@@ -1,4 +1,4 @@
-const slider = () => {
+const Slider = () => {
 	const
 		slides = document.querySelectorAll('.slider__item'),
 		prevSlide = document.querySelector('.slider__prev'),
@@ -43,4 +43,4 @@ const slider = () => {
 
 }
 
-export default slider;
+export default Slider;
