@@ -195,6 +195,72 @@ const Header = () => {
 
 /***/ }),
 
+/***/ "./src/js/modules/logic.js":
+/*!*********************************!*\
+  !*** ./src/js/modules/logic.js ***!
+  \*********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _cartItem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./cartItem */ "./src/js/modules/cartItem.js");
+/* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modal */ "./src/js/modules/modal.js");
+/* harmony import */ var _total__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./total */ "./src/js/modules/total.js");
+
+
+
+
+const logic = () => {
+	document.querySelector('.modal').addEventListener('click', ev => {
+		if (ev.target.classList.contains('modal__button') || ev.target.classList.contains('modal__button_price') || ev.target.classList.contains('modal__button_flare')) {
+
+			const
+				currentSize = document.querySelector('.modal__description_size').innerHTML,
+				currentWeight = document.querySelector('.modal__description_weight').innerHTML,
+				currentSrc = document.querySelector('.modal__pizza_img').getAttribute('src'),
+				currentAlt = document.querySelector('.modal__pizza_img').getAttribute('alt'),
+				currentPrice = document.querySelector('.modal__button_price').innerHTML,
+				serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
+				currentTitle = document.querySelector('.modal__name').innerHTML;
+			let
+				dataId;
+
+			document.querySelectorAll('.modal__radio').forEach(el => {
+				if (el.checked) {
+					dataId = el.getAttribute('id');
+				}
+			})
+
+			if (!(cartArray.includes(dataId))) {
+
+				cartArray.push(dataId);
+
+				(0,_cartItem__WEBPACK_IMPORTED_MODULE_0__["default"])(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
+
+			} else {
+				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
+
+				if (currentItemCount) {
+
+					currentItemCount.innerHTML++;
+					document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
+				}
+			}
+
+			(0,_total__WEBPACK_IMPORTED_MODULE_2__.calculateTotalPrice)();
+			cartCount++;
+			(0,_total__WEBPACK_IMPORTED_MODULE_2__.refreshCartCount)();
+			setTimeout(() => (0,_modal__WEBPACK_IMPORTED_MODULE_1__.hideModal)(document.querySelector('.modal')), 100)
+		}
+	})
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (logic);
+
+/***/ }),
+
 /***/ "./src/js/modules/modal.js":
 /*!*********************************!*\
   !*** ./src/js/modules/modal.js ***!
@@ -371,6 +437,94 @@ const pizzaCard = (dataIngridient, id, img, alt, serialNumber, pizzaName, smallP
 
 /***/ }),
 
+/***/ "./src/js/modules/render.js":
+/*!**********************************!*\
+  !*** ./src/js/modules/render.js ***!
+  \**********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modal */ "./src/js/modules/modal.js");
+/* harmony import */ var _pizzaCard__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./pizzaCard */ "./src/js/modules/pizzaCard.js");
+/* harmony import */ var _service__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./service */ "./src/js/modules/service.js");
+
+
+
+
+const checkNotEmpty = (obj) => {
+	const vals = Object.keys(obj).map(key => obj[key]);
+	if (vals.some(el => el == "") || vals.some(el => el == null) || vals.some(el => el == undefined)) {
+		return false;
+	} else {
+		return true;
+	}
+}
+
+const render = () => {
+	;(0,_service__WEBPACK_IMPORTED_MODULE_2__["default"])()
+		.then((data) => {
+
+			const pizzaArray = [];
+			let serialNumber = 0;
+
+			data.pizza.forEach(elem => {
+
+				const { pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id } = elem;
+
+				if (checkNotEmpty(elem)) {
+
+					(0,_pizzaCard__WEBPACK_IMPORTED_MODULE_1__["default"])(dataIngridient, id, img, alt, serialNumber, pizzaName, smallPrice, ingridient);
+
+					pizzaArray.push(new _modal__WEBPACK_IMPORTED_MODULE_0__["default"](pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
+				}
+
+				++serialNumber;
+
+			})
+
+			return pizzaArray;
+
+		})
+		.then((data) => {
+			(0,_modal__WEBPACK_IMPORTED_MODULE_0__.callCreateModal)('.pizza__item_btn', data);
+			(0,_modal__WEBPACK_IMPORTED_MODULE_0__.callCreateModal)('.pizza__item_img', data);
+			return data;
+		});
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (render);
+
+/***/ }),
+
+/***/ "./src/js/modules/service.js":
+/*!***********************************!*\
+  !*** ./src/js/modules/service.js ***!
+  \***********************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const service = async () => {
+	const res = await fetch('db.json');
+
+	if (!res.ok) {
+		throw new Error(`Could not fetch db.json, received ${res.status}`);
+	}
+
+	return await res.json();
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (service);
+
+/***/ }),
+
 /***/ "./src/js/modules/slider.js":
 /*!**********************************!*\
   !*** ./src/js/modules/slider.js ***!
@@ -527,13 +681,9 @@ var __webpack_exports__ = {};
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_header__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./modules/header */ "./src/js/modules/header.js");
 /* harmony import */ var _modules_slider__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modules/slider */ "./src/js/modules/slider.js");
-/* harmony import */ var _modules_pizzaCard__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/pizzaCard */ "./src/js/modules/pizzaCard.js");
-/* harmony import */ var _modules_cartItem__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/cartItem */ "./src/js/modules/cartItem.js");
-/* harmony import */ var _modules_modal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/modal */ "./src/js/modules/modal.js");
-/* harmony import */ var _modules_cart__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/cart */ "./src/js/modules/cart.js");
-/* harmony import */ var _modules_total__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(/*! ./modules/total */ "./src/js/modules/total.js");
-
-
+/* harmony import */ var _modules_cart__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/cart */ "./src/js/modules/cart.js");
+/* harmony import */ var _modules_render__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/render */ "./src/js/modules/render.js");
+/* harmony import */ var _modules_logic__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/logic */ "./src/js/modules/logic.js");
 
 
 
@@ -542,101 +692,11 @@ __webpack_require__.r(__webpack_exports__);
 
 window.addEventListener('DOMContentLoaded', () => {
 
+	console.log((0,_modules_render__WEBPACK_IMPORTED_MODULE_3__["default"])());
 	(0,_modules_header__WEBPACK_IMPORTED_MODULE_0__["default"])();
 	(0,_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])();
-	(0,_modules_cart__WEBPACK_IMPORTED_MODULE_5__["default"])();
-
-	let
-		cartCount = 0,
-		priceArr = [],
-		arrOfId = [];
-	const
-		cartArray = [];
-
-	const checkNotEmpty = (obj) => {
-		const vals = Object.keys(obj).map(key => obj[key]);
-		if (vals.some(el => el == "") || vals.some(el => el == null) || vals.some(el => el == undefined)) {
-			return false;
-		} else {
-			return true;
-		}
-	}
-
-
-	document.querySelector('.modal').addEventListener('click', ev => {
-		if (ev.target.classList.contains('modal__button') || ev.target.classList.contains('modal__button_price') || ev.target.classList.contains('modal__button_flare')) {
-
-			const
-				currentSize = document.querySelector('.modal__description_size').innerHTML,
-				currentWeight = document.querySelector('.modal__description_weight').innerHTML,
-				currentSrc = document.querySelector('.modal__pizza_img').getAttribute('src'),
-				currentAlt = document.querySelector('.modal__pizza_img').getAttribute('alt'),
-				currentPrice = document.querySelector('.modal__button_price').innerHTML,
-				serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
-				currentTitle = document.querySelector('.modal__name').innerHTML;
-			let
-				dataId;
-
-			document.querySelectorAll('.modal__radio').forEach(el => {
-				if (el.checked) {
-					dataId = el.getAttribute('id');
-				}
-			})
-
-			if (!(cartArray.includes(dataId))) {
-
-				cartArray.push(dataId);
-
-				(0,_modules_cartItem__WEBPACK_IMPORTED_MODULE_3__["default"])(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
-
-			} else {
-				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
-
-				if (currentItemCount) {
-
-					currentItemCount.innerHTML++;
-					document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
-				}
-			}
-
-			(0,_modules_total__WEBPACK_IMPORTED_MODULE_6__.calculateTotalPrice)();
-			cartCount++;
-			(0,_modules_total__WEBPACK_IMPORTED_MODULE_6__.refreshCartCount)();
-			setTimeout(() => (0,_modules_modal__WEBPACK_IMPORTED_MODULE_4__.hideModal)(document.querySelector('.modal')), 100)
-		}
-	})
-
-	fetch('db.json')
-		.then((response) => response.json())
-		.then((data) => {
-
-			const pizzaArray = [];
-			let serialNumber = 0;
-
-			data.pizza.forEach(elem => {
-
-				const { pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id } = elem;
-
-				if (checkNotEmpty(elem)) {
-
-					(0,_modules_pizzaCard__WEBPACK_IMPORTED_MODULE_2__["default"])(dataIngridient, id, img, alt, serialNumber, pizzaName, smallPrice, ingridient);
-
-					pizzaArray.push(new _modules_modal__WEBPACK_IMPORTED_MODULE_4__["default"](pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
-				}
-
-				++serialNumber;
-
-			})
-
-			return pizzaArray;
-
-		})
-		.then((data) => {
-			(0,_modules_modal__WEBPACK_IMPORTED_MODULE_4__.callCreateModal)('.pizza__item_btn', data);
-			(0,_modules_modal__WEBPACK_IMPORTED_MODULE_4__.callCreateModal)('.pizza__item_img', data);
-		});
-
-
+	(0,_modules_cart__WEBPACK_IMPORTED_MODULE_2__["default"])();
+	(0,_modules_logic__WEBPACK_IMPORTED_MODULE_4__["default"])()
 
 })
 })();
