@@ -25,7 +25,7 @@ const cart = () => {
 			cart.classList.remove('hide');
 			cart.style.height = '100vh';
 			document.body.style.overflow = 'hidden';
-			setTimeout(() => cartContainer.style.transform = 'translate(0rem)', 100);
+			setTimeout(() => cartContainer.style.transform = 'translate(0rem)', 0);
 		})
 	})
 
@@ -149,6 +149,7 @@ function deleteCartItem(cartItem, dataId, currentCount) {
 		cartArray.splice(cartArray.indexOf(dataId), 1);
 		localStorage.setItem('idArray', JSON.stringify(cartArray));
 	})
+
 	cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
 		toggleCartItemDelete(cartItem, 0, -2);
 	})
@@ -272,7 +273,7 @@ const logic = () => {
 			(0,_total__WEBPACK_IMPORTED_MODULE_2__.calculateTotalPrice)();
 			+localStorage.countOfGoods++;
 			(0,_total__WEBPACK_IMPORTED_MODULE_2__.refreshCartCount)();
-			setTimeout(() => (0,_modal__WEBPACK_IMPORTED_MODULE_1__.hideModal)(document.querySelector('.modal')), 100)
+			(0,_modal__WEBPACK_IMPORTED_MODULE_1__.hideModal)(document.querySelector('.modal'));
 		}
 	})
 }

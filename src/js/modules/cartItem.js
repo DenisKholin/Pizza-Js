@@ -83,6 +83,7 @@ function deleteCartItem(cartItem, dataId, currentCount) {
 		cartArray.splice(cartArray.indexOf(dataId), 1);
 		localStorage.setItem('idArray', JSON.stringify(cartArray));
 	})
+
 	cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
 		toggleCartItemDelete(cartItem, 0, -2);
 	})

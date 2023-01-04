@@ -44,7 +44,7 @@ const logic = () => {
 			calculateTotalPrice();
 			+localStorage.countOfGoods++;
 			refreshCartCount();
-			setTimeout(() => hideModal(document.querySelector('.modal')), 100)
+			hideModal(document.querySelector('.modal'));
 		}
 	})
 }

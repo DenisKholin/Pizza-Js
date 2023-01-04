@@ -11,7 +11,7 @@ const cart = () => {
 			cart.classList.remove('hide');
 			cart.style.height = '100vh';
 			document.body.style.overflow = 'hidden';
-			setTimeout(() => cartContainer.style.transform = 'translate(0rem)', 100);
+			setTimeout(() => cartContainer.style.transform = 'translate(0rem)', 0);
 		})
 	})
 
