@@ -3,10 +3,12 @@ import Slider from "./modules/slider";
 import cart from "./modules/cart";
 import render from "./modules/render";
 import logic from "./modules/logic";
+import lStorage from "./modules/lStorage";
 
 window.addEventListener('DOMContentLoaded', () => {
 
-	console.log(render());
+	lStorage();
+	render();
 	Header();
 	Slider();
 	cart();

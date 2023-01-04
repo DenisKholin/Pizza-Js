@@ -1,4 +1,5 @@
 function calculateTotalPrice() {
+	let priceArr = [];
 	document.querySelectorAll('.cart__item_price').forEach(el => {
 		el = +el.innerHTML.slice(0, -5);
 		priceArr.push(el);
@@ -11,7 +12,7 @@ function calculateTotalPrice() {
 
 function refreshCartCount() {
 	document.querySelectorAll('.cart-count').forEach(el => {
-		el.innerHTML = cartCount;
+		el.innerHTML = +localStorage.countOfGoods;
 	})
 }
 

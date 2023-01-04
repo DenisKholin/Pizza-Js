@@ -16,20 +16,16 @@ const render = () => {
 		.then((data) => {
 
 			const pizzaArray = [];
-			let serialNumber = 0;
 
-			data.pizza.forEach(elem => {
+			data.pizza.forEach((el, serialNumber) => {
 
-				const { pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id } = elem;
+				const { pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id } = el;
 
-				if (checkNotEmpty(elem)) {
-
+				if (checkNotEmpty(el)) {
 					pizzaCard(dataIngridient, id, img, alt, serialNumber, pizzaName, smallPrice, ingridient);
 
 					pizzaArray.push(new Modal(pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
 				}
-
-				++serialNumber;
 
 			})
 
@@ -39,9 +35,7 @@ const render = () => {
 		.then((data) => {
 			callCreateModal('.pizza__item_btn', data);
 			callCreateModal('.pizza__item_img', data);
-			return data;
 		});
-
 }
 
 export default render;

@@ -15,7 +15,8 @@ const logic = () => {
 				serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
 				currentTitle = document.querySelector('.modal__name').innerHTML;
 			let
-				dataId;
+				dataId,
+				cartArray = JSON.parse(localStorage.idArray);
 
 			document.querySelectorAll('.modal__radio').forEach(el => {
 				if (el.checked) {
@@ -26,6 +27,7 @@ const logic = () => {
 			if (!(cartArray.includes(dataId))) {
 
 				cartArray.push(dataId);
+				localStorage.setItem('idArray', JSON.stringify(cartArray));
 
 				createCartItem(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
 
@@ -40,7 +42,7 @@ const logic = () => {
 			}
 
 			calculateTotalPrice();
-			cartCount++;
+			+localStorage.countOfGoods++;
 			refreshCartCount();
 			setTimeout(() => hideModal(document.querySelector('.modal')), 100)
 		}

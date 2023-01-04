@@ -46,12 +46,8 @@ function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName)
 
 	cartItem.querySelector('.cart__item_plus').addEventListener('click', () => {
 		cartItemCount.innerHTML++;
-
-		cartCount++;
-		updateLocalStorage(pizzaName, size, weight, cartItemCount.innerHTML, (priceOfOne * cartItemCount.innerHTML).toFixed(2), src, dataId, alt);
+		+localStorage.countOfGoods++;
 		refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
-
-
 	})
 
 	cartItem.querySelector('.cart__item_minus').addEventListener('click', () => {
@@ -59,10 +55,8 @@ function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName)
 			deleteCartItem(cartItem, dataId, cartItemCount);
 		} else {
 			cartItemCount.innerHTML--;
-			cartCount--;
+			+localStorage.countOfGoods--;
 			refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
-
-			updateLocalStorage(pizzaName, size, weight, cartItemCount.innerHTML, (priceOfOne * cartItemCount.innerHTML).toFixed(2), src, dataId, alt);
 		}
 	})
 
@@ -78,14 +72,16 @@ function refreshCartitem(price, priceOfOne, count) {
 }
 
 function deleteCartItem(cartItem, dataId, currentCount) {
+	let cartArray = JSON.parse(localStorage.idArray);
 	toggleCartItemDelete(cartItem, 1, 2);
 
 	cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
 		cartItem.remove();
 		calculateTotalPrice();
-		cartCount = cartCount - +currentCount.innerHTML;
+		localStorage.countOfGoods = +localStorage.countOfGoods - +currentCount.innerHTML;
 		refreshCartCount()
 		cartArray.splice(cartArray.indexOf(dataId), 1);
+		localStorage.setItem('idArray', JSON.stringify(cartArray));
 	})
 	cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
 		toggleCartItemDelete(cartItem, 0, -2);

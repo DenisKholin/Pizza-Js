@@ -112,12 +112,8 @@ function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName)
 
 	cartItem.querySelector('.cart__item_plus').addEventListener('click', () => {
 		cartItemCount.innerHTML++;
-
-		cartCount++;
-		updateLocalStorage(pizzaName, size, weight, cartItemCount.innerHTML, (priceOfOne * cartItemCount.innerHTML).toFixed(2), src, dataId, alt);
+		+localStorage.countOfGoods++;
 		refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
-
-
 	})
 
 	cartItem.querySelector('.cart__item_minus').addEventListener('click', () => {
@@ -125,10 +121,8 @@ function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName)
 			deleteCartItem(cartItem, dataId, cartItemCount);
 		} else {
 			cartItemCount.innerHTML--;
-			cartCount--;
+			+localStorage.countOfGoods--;
 			refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
-
-			updateLocalStorage(pizzaName, size, weight, cartItemCount.innerHTML, (priceOfOne * cartItemCount.innerHTML).toFixed(2), src, dataId, alt);
 		}
 	})
 
@@ -144,14 +138,16 @@ function refreshCartitem(price, priceOfOne, count) {
 }
 
 function deleteCartItem(cartItem, dataId, currentCount) {
+	let cartArray = JSON.parse(localStorage.idArray);
 	toggleCartItemDelete(cartItem, 1, 2);
 
 	cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
 		cartItem.remove();
 		(0,_total__WEBPACK_IMPORTED_MODULE_0__.calculateTotalPrice)();
-		cartCount = cartCount - +currentCount.innerHTML;
+		localStorage.countOfGoods = +localStorage.countOfGoods - +currentCount.innerHTML;
 		(0,_total__WEBPACK_IMPORTED_MODULE_0__.refreshCartCount)()
 		cartArray.splice(cartArray.indexOf(dataId), 1);
+		localStorage.setItem('idArray', JSON.stringify(cartArray));
 	})
 	cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
 		toggleCartItemDelete(cartItem, 0, -2);
@@ -195,6 +191,28 @@ const Header = () => {
 
 /***/ }),
 
+/***/ "./src/js/modules/lStorage.js":
+/*!************************************!*\
+  !*** ./src/js/modules/lStorage.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+function lStorage() {
+	// if (localStorage.length == 0) {
+	localStorage.setItem('countOfGoods', 0);
+	localStorage.setItem('idArray', JSON.stringify([]));
+	// }
+
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (lStorage);
+
+/***/ }),
+
 /***/ "./src/js/modules/logic.js":
 /*!*********************************!*\
   !*** ./src/js/modules/logic.js ***!
@@ -225,7 +243,8 @@ const logic = () => {
 				serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
 				currentTitle = document.querySelector('.modal__name').innerHTML;
 			let
-				dataId;
+				dataId,
+				cartArray = JSON.parse(localStorage.idArray);
 
 			document.querySelectorAll('.modal__radio').forEach(el => {
 				if (el.checked) {
@@ -236,6 +255,7 @@ const logic = () => {
 			if (!(cartArray.includes(dataId))) {
 
 				cartArray.push(dataId);
+				localStorage.setItem('idArray', JSON.stringify(cartArray));
 
 				(0,_cartItem__WEBPACK_IMPORTED_MODULE_0__["default"])(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
 
@@ -250,7 +270,7 @@ const logic = () => {
 			}
 
 			(0,_total__WEBPACK_IMPORTED_MODULE_2__.calculateTotalPrice)();
-			cartCount++;
+			+localStorage.countOfGoods++;
 			(0,_total__WEBPACK_IMPORTED_MODULE_2__.refreshCartCount)();
 			setTimeout(() => (0,_modal__WEBPACK_IMPORTED_MODULE_1__.hideModal)(document.querySelector('.modal')), 100)
 		}
@@ -468,20 +488,16 @@ const render = () => {
 		.then((data) => {
 
 			const pizzaArray = [];
-			let serialNumber = 0;
 
-			data.pizza.forEach(elem => {
+			data.pizza.forEach((el, serialNumber) => {
 
-				const { pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id } = elem;
+				const { pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id } = el;
 
-				if (checkNotEmpty(elem)) {
-
+				if (checkNotEmpty(el)) {
 					(0,_pizzaCard__WEBPACK_IMPORTED_MODULE_1__["default"])(dataIngridient, id, img, alt, serialNumber, pizzaName, smallPrice, ingridient);
 
 					pizzaArray.push(new _modal__WEBPACK_IMPORTED_MODULE_0__["default"](pizzaName, img, alt, price, ingridient, dataIngridient, smallImg, bigImg, smallPrice, bigPrice, size, smallSize, bigSize, weight, smallWeight, bigWeight, id, serialNumber))
 				}
-
-				++serialNumber;
 
 			})
 
@@ -491,9 +507,7 @@ const render = () => {
 		.then((data) => {
 			(0,_modal__WEBPACK_IMPORTED_MODULE_0__.callCreateModal)('.pizza__item_btn', data);
 			(0,_modal__WEBPACK_IMPORTED_MODULE_0__.callCreateModal)('.pizza__item_img', data);
-			return data;
 		});
-
 }
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (render);
@@ -596,6 +610,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "refreshCartCount": () => (/* binding */ refreshCartCount)
 /* harmony export */ });
 function calculateTotalPrice() {
+	let priceArr = [];
 	document.querySelectorAll('.cart__item_price').forEach(el => {
 		el = +el.innerHTML.slice(0, -5);
 		priceArr.push(el);
@@ -608,7 +623,7 @@ function calculateTotalPrice() {
 
 function refreshCartCount() {
 	document.querySelectorAll('.cart-count').forEach(el => {
-		el.innerHTML = cartCount;
+		el.innerHTML = +localStorage.countOfGoods;
 	})
 }
 
@@ -684,6 +699,8 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _modules_cart__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modules/cart */ "./src/js/modules/cart.js");
 /* harmony import */ var _modules_render__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./modules/render */ "./src/js/modules/render.js");
 /* harmony import */ var _modules_logic__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./modules/logic */ "./src/js/modules/logic.js");
+/* harmony import */ var _modules_lStorage__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(/*! ./modules/lStorage */ "./src/js/modules/lStorage.js");
+
 
 
 
@@ -692,7 +709,8 @@ __webpack_require__.r(__webpack_exports__);
 
 window.addEventListener('DOMContentLoaded', () => {
 
-	console.log((0,_modules_render__WEBPACK_IMPORTED_MODULE_3__["default"])());
+	(0,_modules_lStorage__WEBPACK_IMPORTED_MODULE_5__["default"])();
+	(0,_modules_render__WEBPACK_IMPORTED_MODULE_3__["default"])();
 	(0,_modules_header__WEBPACK_IMPORTED_MODULE_0__["default"])();
 	(0,_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])();
 	(0,_modules_cart__WEBPACK_IMPORTED_MODULE_2__["default"])();
