@@ -214,6 +214,31 @@ function lStorage() {
 
 /***/ }),
 
+/***/ "./src/js/modules/localStorageCartItem.js":
+/*!************************************************!*\
+  !*** ./src/js/modules/localStorageCartItem.js ***!
+  \************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+const localStorageCartItem = (title, size, weight, src, price, id, count) => {
+	localStorage[id] = JSON.stringify({
+		title,
+		size,
+		weight,
+		src,
+		price,
+		count
+	})
+}
+
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (localStorageCartItem);
+
+/***/ }),
+
 /***/ "./src/js/modules/logic.js":
 /*!*********************************!*\
   !*** ./src/js/modules/logic.js ***!
@@ -225,8 +250,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _cartItem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./cartItem */ "./src/js/modules/cartItem.js");
-/* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./modal */ "./src/js/modules/modal.js");
-/* harmony import */ var _total__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./total */ "./src/js/modules/total.js");
+/* harmony import */ var _localStorageCartItem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./localStorageCartItem */ "./src/js/modules/localStorageCartItem.js");
+/* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modal */ "./src/js/modules/modal.js");
+/* harmony import */ var _total__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./total */ "./src/js/modules/total.js");
+
 
 
 
@@ -260,6 +287,8 @@ const logic = () => {
 
 				(0,_cartItem__WEBPACK_IMPORTED_MODULE_0__["default"])(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
 
+				(0,_localStorageCartItem__WEBPACK_IMPORTED_MODULE_1__["default"])(currentTitle, currentSize, currentWeight, currentSrc, currentPrice, dataId, 1)
+
 			} else {
 				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
 
@@ -270,10 +299,10 @@ const logic = () => {
 				}
 			}
 
-			(0,_total__WEBPACK_IMPORTED_MODULE_2__.calculateTotalPrice)();
+			(0,_total__WEBPACK_IMPORTED_MODULE_3__.calculateTotalPrice)();
 			+localStorage.countOfGoods++;
-			(0,_total__WEBPACK_IMPORTED_MODULE_2__.refreshCartCount)();
-			(0,_modal__WEBPACK_IMPORTED_MODULE_1__.hideModal)(document.querySelector('.modal'));
+			(0,_total__WEBPACK_IMPORTED_MODULE_3__.refreshCartCount)();
+			(0,_modal__WEBPACK_IMPORTED_MODULE_2__.hideModal)(document.querySelector('.modal'));
 		}
 	})
 }

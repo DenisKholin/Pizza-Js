@@ -1,4 +1,5 @@
 import createCartItem from "./cartItem";
+import localStorageCartItem from "./localStorageCartItem";
 import { hideModal } from "./modal";
 import { calculateTotalPrice, refreshCartCount } from "./total";
 
@@ -30,6 +31,8 @@ const logic = () => {
 				localStorage.setItem('idArray', JSON.stringify(cartArray));
 
 				createCartItem(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
+
+				localStorageCartItem(currentTitle, currentSize, currentWeight, currentSrc, currentPrice, dataId, 1)
 
 			} else {
 				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
