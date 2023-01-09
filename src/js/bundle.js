@@ -63,7 +63,9 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
-/* harmony import */ var _total__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./total */ "./src/js/modules/total.js");
+/* harmony import */ var _lStorage__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./lStorage */ "./src/js/modules/lStorage.js");
+/* harmony import */ var _total__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./total */ "./src/js/modules/total.js");
+
 
 
 function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName) {
@@ -113,6 +115,7 @@ function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName)
 	cartItem.querySelector('.cart__item_plus').addEventListener('click', () => {
 		cartItemCount.innerHTML++;
 		+localStorage.countOfGoods++;
+		(0,_lStorage__WEBPACK_IMPORTED_MODULE_0__.changeLocalStorageCartItem)(dataId, cartItemCount.innerHTML)
 		refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
 	})
 
@@ -122,6 +125,7 @@ function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName)
 		} else {
 			cartItemCount.innerHTML--;
 			+localStorage.countOfGoods--;
+			(0,_lStorage__WEBPACK_IMPORTED_MODULE_0__.changeLocalStorageCartItem)(dataId, cartItemCount.innerHTML)
 			refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
 		}
 	})
@@ -133,8 +137,8 @@ function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName)
 
 function refreshCartitem(price, priceOfOne, count) {
 	price.innerHTML = ((priceOfOne * count.innerHTML).toFixed(2)) + ' руб.';
-	(0,_total__WEBPACK_IMPORTED_MODULE_0__.refreshCartCount)()
-	;(0,_total__WEBPACK_IMPORTED_MODULE_0__.calculateTotalPrice)();
+	(0,_total__WEBPACK_IMPORTED_MODULE_1__.refreshCartCount)()
+	;(0,_total__WEBPACK_IMPORTED_MODULE_1__.calculateTotalPrice)();
 }
 
 function deleteCartItem(cartItem, dataId, currentCount) {
@@ -143,11 +147,10 @@ function deleteCartItem(cartItem, dataId, currentCount) {
 
 	cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
 		cartItem.remove();
-		(0,_total__WEBPACK_IMPORTED_MODULE_0__.calculateTotalPrice)();
-		localStorage.countOfGoods = +localStorage.countOfGoods - +currentCount.innerHTML;
-		(0,_total__WEBPACK_IMPORTED_MODULE_0__.refreshCartCount)()
+		(0,_total__WEBPACK_IMPORTED_MODULE_1__.calculateTotalPrice)();
 		cartArray.splice(cartArray.indexOf(dataId), 1);
-		localStorage.setItem('idArray', JSON.stringify(cartArray));
+		(0,_lStorage__WEBPACK_IMPORTED_MODULE_0__.deleteLocalStorageCartItem)(dataId, currentCount, cartArray);
+		(0,_total__WEBPACK_IMPORTED_MODULE_1__.refreshCartCount)();
 	})
 
 	cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
@@ -202,6 +205,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
 /* harmony export */   "addLocalStorageCartItem": () => (/* binding */ addLocalStorageCartItem),
 /* harmony export */   "changeLocalStorageCartItem": () => (/* binding */ changeLocalStorageCartItem),
+/* harmony export */   "deleteLocalStorageCartItem": () => (/* binding */ deleteLocalStorageCartItem),
 /* harmony export */   "lStorage": () => (/* binding */ lStorage)
 /* harmony export */ });
 const lStorage = () => {
@@ -219,6 +223,7 @@ const addLocalStorageCartItem = (title, size, weight, src, price, id, count) => 
 		size,
 		weight,
 		src,
+		priceOfOne: price,
 		price,
 		count
 	})
@@ -227,8 +232,14 @@ const addLocalStorageCartItem = (title, size, weight, src, price, id, count) => 
 const changeLocalStorageCartItem = (id, count) => {
 	const obj = JSON.parse(localStorage[id]);
 	obj.count = count;
-	obj.price = (obj.price * +obj.count).toFixed(2);
+	obj.price = (obj.priceOfOne * +obj.count).toFixed(2);
 	localStorage[id] = JSON.stringify(obj);
+}
+
+const deleteLocalStorageCartItem = (id, count, cartArray) => {
+	localStorage.removeItem(id);
+	localStorage.countOfGoods = +localStorage.countOfGoods - +count.innerHTML;
+	localStorage.setItem('idArray', JSON.stringify(cartArray));
 }
 
 

@@ -13,6 +13,7 @@ const addLocalStorageCartItem = (title, size, weight, src, price, id, count) => 
 		size,
 		weight,
 		src,
+		priceOfOne: price,
 		price,
 		count
 	})
@@ -21,12 +22,19 @@ const addLocalStorageCartItem = (title, size, weight, src, price, id, count) => 
 const changeLocalStorageCartItem = (id, count) => {
 	const obj = JSON.parse(localStorage[id]);
 	obj.count = count;
-	obj.price = (obj.price * +obj.count).toFixed(2);
+	obj.price = (obj.priceOfOne * +obj.count).toFixed(2);
 	localStorage[id] = JSON.stringify(obj);
+}
+
+const deleteLocalStorageCartItem = (id, count, cartArray) => {
+	localStorage.removeItem(id);
+	localStorage.countOfGoods = +localStorage.countOfGoods - +count.innerHTML;
+	localStorage.setItem('idArray', JSON.stringify(cartArray));
 }
 
 export {
 	lStorage,
 	addLocalStorageCartItem,
-	changeLocalStorageCartItem
+	changeLocalStorageCartItem,
+	deleteLocalStorageCartItem
 };

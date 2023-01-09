@@ -1,3 +1,4 @@
+import { changeLocalStorageCartItem, deleteLocalStorageCartItem } from "./lStorage";
 import { calculateTotalPrice, refreshCartCount } from "./total";
 
 function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName) {
@@ -47,6 +48,7 @@ function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName)
 	cartItem.querySelector('.cart__item_plus').addEventListener('click', () => {
 		cartItemCount.innerHTML++;
 		+localStorage.countOfGoods++;
+		changeLocalStorageCartItem(dataId, cartItemCount.innerHTML)
 		refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
 	})
 
@@ -56,6 +58,7 @@ function createCartItem(src, size, weight, price, count, dataId, alt, pizzaName)
 		} else {
 			cartItemCount.innerHTML--;
 			+localStorage.countOfGoods--;
+			changeLocalStorageCartItem(dataId, cartItemCount.innerHTML)
 			refreshCartitem(cartItemPrice, priceOfOne, cartItemCount);
 		}
 	})
@@ -78,10 +81,9 @@ function deleteCartItem(cartItem, dataId, currentCount) {
 	cartItem.querySelector('.cart__delete_yes').addEventListener('click', () => {
 		cartItem.remove();
 		calculateTotalPrice();
-		localStorage.countOfGoods = +localStorage.countOfGoods - +currentCount.innerHTML;
-		refreshCartCount()
 		cartArray.splice(cartArray.indexOf(dataId), 1);
-		localStorage.setItem('idArray', JSON.stringify(cartArray));
+		deleteLocalStorageCartItem(dataId, currentCount, cartArray);
+		refreshCartCount();
 	})
 
 	cartItem.querySelector('.cart__delete_no').addEventListener('click', () => {
