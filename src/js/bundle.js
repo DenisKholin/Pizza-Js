@@ -200,31 +200,20 @@ const Header = () => {
 
 __webpack_require__.r(__webpack_exports__);
 /* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */   "addLocalStorageCartItem": () => (/* binding */ addLocalStorageCartItem),
+/* harmony export */   "changeLocalStorageCartItem": () => (/* binding */ changeLocalStorageCartItem),
+/* harmony export */   "lStorage": () => (/* binding */ lStorage)
 /* harmony export */ });
-function lStorage() {
+const lStorage = () => {
 	// if (localStorage.length == 0) {
-	localStorage.setItem('countOfGoods', 0);
-	localStorage.setItem('idArray', JSON.stringify([]));
+	localStorage.countOfGoods = 0;
+	localStorage.idArray = JSON.stringify([]);
+	localStorage.totalPrice = 0;
 	// }
 
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (lStorage);
-
-/***/ }),
-
-/***/ "./src/js/modules/localStorageCartItem.js":
-/*!************************************************!*\
-  !*** ./src/js/modules/localStorageCartItem.js ***!
-  \************************************************/
-/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
-
-__webpack_require__.r(__webpack_exports__);
-/* harmony export */ __webpack_require__.d(__webpack_exports__, {
-/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
-/* harmony export */ });
-const localStorageCartItem = (title, size, weight, src, price, id, count) => {
+const addLocalStorageCartItem = (title, size, weight, src, price, id, count) => {
 	localStorage[id] = JSON.stringify({
 		title,
 		size,
@@ -235,7 +224,15 @@ const localStorageCartItem = (title, size, weight, src, price, id, count) => {
 	})
 }
 
-/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (localStorageCartItem);
+const changeLocalStorageCartItem = (id, count) => {
+	const obj = JSON.parse(localStorage[id]);
+	obj.count = count;
+	obj.price = (obj.price * +obj.count).toFixed(2);
+	localStorage[id] = JSON.stringify(obj);
+}
+
+
+
 
 /***/ }),
 
@@ -250,7 +247,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _cartItem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./cartItem */ "./src/js/modules/cartItem.js");
-/* harmony import */ var _localStorageCartItem__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./localStorageCartItem */ "./src/js/modules/localStorageCartItem.js");
+/* harmony import */ var _lStorage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./lStorage */ "./src/js/modules/lStorage.js");
 /* harmony import */ var _modal__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./modal */ "./src/js/modules/modal.js");
 /* harmony import */ var _total__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./total */ "./src/js/modules/total.js");
 
@@ -287,14 +284,14 @@ const logic = () => {
 
 				(0,_cartItem__WEBPACK_IMPORTED_MODULE_0__["default"])(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
 
-				(0,_localStorageCartItem__WEBPACK_IMPORTED_MODULE_1__["default"])(currentTitle, currentSize, currentWeight, currentSrc, currentPrice, dataId, 1)
+				(0,_lStorage__WEBPACK_IMPORTED_MODULE_1__.addLocalStorageCartItem)(currentTitle, currentSize, currentWeight, currentSrc, currentPrice, dataId, 1)
 
 			} else {
 				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
 
 				if (currentItemCount) {
-
 					currentItemCount.innerHTML++;
+					(0,_lStorage__WEBPACK_IMPORTED_MODULE_1__.changeLocalStorageCartItem)(dataId, currentItemCount.innerHTML)
 					document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
 				}
 			}
@@ -647,6 +644,7 @@ function calculateTotalPrice() {
 	})
 	document.querySelectorAll('.total-price').forEach(el => {
 		el.innerHTML = priceArr.reduce((sum, current) => sum + current, 0).toFixed(2) + ' руб.';
+		localStorage.totalPrice = el.innerHTML;
 	})
 	priceArr = [];
 }
@@ -739,7 +737,7 @@ __webpack_require__.r(__webpack_exports__);
 
 window.addEventListener('DOMContentLoaded', () => {
 
-	(0,_modules_lStorage__WEBPACK_IMPORTED_MODULE_5__["default"])();
+	(0,_modules_lStorage__WEBPACK_IMPORTED_MODULE_5__.lStorage)();
 	(0,_modules_render__WEBPACK_IMPORTED_MODULE_3__["default"])();
 	(0,_modules_header__WEBPACK_IMPORTED_MODULE_0__["default"])();
 	(0,_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])();

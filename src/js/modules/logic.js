@@ -1,5 +1,5 @@
 import createCartItem from "./cartItem";
-import localStorageCartItem from "./localStorageCartItem";
+import { addLocalStorageCartItem, changeLocalStorageCartItem } from "./lStorage";
 import { hideModal } from "./modal";
 import { calculateTotalPrice, refreshCartCount } from "./total";
 
@@ -32,14 +32,14 @@ const logic = () => {
 
 				createCartItem(currentSrc, currentSize, currentWeight, currentPrice, 1, dataId, currentAlt, currentTitle);
 
-				localStorageCartItem(currentTitle, currentSize, currentWeight, currentSrc, currentPrice, dataId, 1)
+				addLocalStorageCartItem(currentTitle, currentSize, currentWeight, currentSrc, currentPrice, dataId, 1)
 
 			} else {
 				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
 
 				if (currentItemCount) {
-
 					currentItemCount.innerHTML++;
+					changeLocalStorageCartItem(dataId, currentItemCount.innerHTML)
 					document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
 				}
 			}
