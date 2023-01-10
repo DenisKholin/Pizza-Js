@@ -206,19 +206,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "addLocalStorageCartItem": () => (/* binding */ addLocalStorageCartItem),
 /* harmony export */   "changeLocalStorageCartItem": () => (/* binding */ changeLocalStorageCartItem),
 /* harmony export */   "deleteLocalStorageCartItem": () => (/* binding */ deleteLocalStorageCartItem),
-/* harmony export */   "lStorage": () => (/* binding */ lStorage),
+/* harmony export */   "initLocalStorage": () => (/* binding */ initLocalStorage),
 /* harmony export */   "renderFromLocalStorage": () => (/* binding */ renderFromLocalStorage)
 /* harmony export */ });
 /* harmony import */ var _cartItem__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./cartItem */ "./src/js/modules/cartItem.js");
 
 
-const lStorage = () => {
+const initLocalStorage = () => {
 	if (localStorage.length == 0) {
 		localStorage.countOfGoods = 0;
 		localStorage.idArray = JSON.stringify([]);
 		localStorage.totalPrice = '0.00 руб.';
 	}
 
+	emptyCart();
 }
 
 const addLocalStorageCartItem = (title, size, weight, src, price, id, count) => {
@@ -238,12 +239,14 @@ const changeLocalStorageCartItem = (id, count) => {
 	obj.count = count;
 	obj.price = (obj.priceOfOne * +obj.count).toFixed(2);
 	localStorage[id] = JSON.stringify(obj);
+	emptyCart();
 }
 
 const deleteLocalStorageCartItem = (id, count, cartArray) => {
 	localStorage.removeItem(id);
 	localStorage.countOfGoods = +localStorage.countOfGoods - +count.innerHTML;
 	localStorage.idArray = JSON.stringify(cartArray);
+	emptyCart();
 }
 
 const renderFromLocalStorage = () => {
@@ -253,6 +256,21 @@ const renderFromLocalStorage = () => {
 		(0,_cartItem__WEBPACK_IMPORTED_MODULE_0__["default"])(obj.src, obj.size, obj.weight, obj.price, obj.count, el, obj.title, obj.title)
 	})
 }
+
+const emptyCart = () => {
+	if (localStorage.countOfGoods == 0) {
+		document.querySelector('.cart__product').innerHTML = `
+			<div class="cart__empty">
+				<img src="src/img/cart/empty-cart.svg" alt="Пустая корзина" class="cart__empty_img">
+				<p class="cart__empty_title">УПС!</p>
+				<p class="cart__empty_text">Ваша корзина пуста, откройте «Меню»
+				и выберите понравившийся товар.</p>
+			</div>
+		`
+	}
+}
+
+
 
 
 
@@ -771,13 +789,12 @@ __webpack_require__.r(__webpack_exports__);
 
 window.addEventListener('DOMContentLoaded', () => {
 
-	(0,_modules_lStorage__WEBPACK_IMPORTED_MODULE_5__.lStorage)();
+	(0,_modules_lStorage__WEBPACK_IMPORTED_MODULE_5__.initLocalStorage)();
 	(0,_modules_render__WEBPACK_IMPORTED_MODULE_3__["default"])();
 	(0,_modules_header__WEBPACK_IMPORTED_MODULE_0__["default"])();
 	(0,_modules_slider__WEBPACK_IMPORTED_MODULE_1__["default"])();
 	(0,_modules_cart__WEBPACK_IMPORTED_MODULE_2__["default"])();
 	(0,_modules_logic__WEBPACK_IMPORTED_MODULE_4__["default"])();
-	// calculateTotalPrice();
 	(0,_modules_total__WEBPACK_IMPORTED_MODULE_6__.refreshCartCount)();
 
 })
