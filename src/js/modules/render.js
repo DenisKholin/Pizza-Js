@@ -1,6 +1,8 @@
+import { renderFromLocalStorage } from "./lStorage";
 import Modal, { callCreateModal } from "./modal";
 import pizzaCard from "./pizzaCard";
 import service from "./service";
+import { calculateTotalPrice } from "./total";
 
 const checkNotEmpty = (obj) => {
 	const vals = Object.keys(obj).map(key => obj[key]);
@@ -35,7 +37,11 @@ const render = () => {
 		.then((data) => {
 			callCreateModal('.pizza__item_btn', data);
 			callCreateModal('.pizza__item_img', data);
-		});
+			renderFromLocalStorage();
+		})
+		.then(() => {
+			calculateTotalPrice();
+		})
 }
 
 export default render;

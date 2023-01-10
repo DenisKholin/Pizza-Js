@@ -4,6 +4,8 @@ import { hideModal } from "./modal";
 import { calculateTotalPrice, refreshCartCount } from "./total";
 
 const logic = () => {
+	let cartArray = JSON.parse(localStorage.idArray);
+
 	document.querySelector('.modal').addEventListener('click', ev => {
 		if (ev.target.classList.contains('modal__button') || ev.target.classList.contains('modal__button_price') || ev.target.classList.contains('modal__button_flare')) {
 
@@ -16,8 +18,7 @@ const logic = () => {
 				serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
 				currentTitle = document.querySelector('.modal__name').innerHTML;
 			let
-				dataId,
-				cartArray = JSON.parse(localStorage.idArray);
+				dataId;
 
 			document.querySelectorAll('.modal__radio').forEach(el => {
 				if (el.checked) {

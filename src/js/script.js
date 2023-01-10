@@ -4,6 +4,7 @@ import cart from "./modules/cart";
 import render from "./modules/render";
 import logic from "./modules/logic";
 import { lStorage } from "./modules/lStorage";
+import { calculateTotalPrice, refreshCartCount } from "./modules/total";
 
 window.addEventListener('DOMContentLoaded', () => {
 
@@ -12,6 +13,8 @@ window.addEventListener('DOMContentLoaded', () => {
 	Header();
 	Slider();
 	cart();
-	logic()
+	logic();
+	// calculateTotalPrice();
+	refreshCartCount();
 
 })

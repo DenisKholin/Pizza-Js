@@ -5,8 +5,8 @@ function calculateTotalPrice() {
 		priceArr.push(el);
 	})
 	document.querySelectorAll('.total-price').forEach(el => {
-		el.innerHTML = priceArr.reduce((sum, current) => sum + current, 0).toFixed(2) + ' руб.';
-		localStorage.totalPrice = el.innerHTML;
+		localStorage.totalPrice = priceArr.reduce((sum, current) => sum + current, 0).toFixed(2) + ' руб.';
+		el.innerHTML = localStorage.totalPrice;
 	})
 	priceArr = [];
 }

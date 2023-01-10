@@ -1,9 +1,11 @@
+import createCartItem from "./cartItem";
+
 const lStorage = () => {
-	// if (localStorage.length == 0) {
-	localStorage.countOfGoods = 0;
-	localStorage.idArray = JSON.stringify([]);
-	localStorage.totalPrice = 0;
-	// }
+	if (localStorage.length == 0) {
+		localStorage.countOfGoods = 0;
+		localStorage.idArray = JSON.stringify([]);
+		localStorage.totalPrice = '0.00 руб.';
+	}
 
 }
 
@@ -29,12 +31,21 @@ const changeLocalStorageCartItem = (id, count) => {
 const deleteLocalStorageCartItem = (id, count, cartArray) => {
 	localStorage.removeItem(id);
 	localStorage.countOfGoods = +localStorage.countOfGoods - +count.innerHTML;
-	localStorage.setItem('idArray', JSON.stringify(cartArray));
+	localStorage.idArray = JSON.stringify(cartArray);
+}
+
+const renderFromLocalStorage = () => {
+	const arr = JSON.parse(localStorage.idArray);
+	arr.forEach(el => {
+		const obj = JSON.parse(localStorage[el]);
+		createCartItem(obj.src, obj.size, obj.weight, obj.price, obj.count, el, obj.title, obj.title)
+	})
 }
 
 export {
 	lStorage,
 	addLocalStorageCartItem,
 	changeLocalStorageCartItem,
-	deleteLocalStorageCartItem
+	deleteLocalStorageCartItem,
+	renderFromLocalStorage
 };
