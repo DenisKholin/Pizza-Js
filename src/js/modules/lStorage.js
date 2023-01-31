@@ -20,6 +20,7 @@ const addLocalStorageCartItem = (title, size, weight, src, price, id, count) => 
 		price,
 		count
 	})
+	emptyCart();
 }
 
 const changeLocalStorageCartItem = (id, count) => {
@@ -46,16 +47,8 @@ const renderFromLocalStorage = () => {
 }
 
 const emptyCart = () => {
-	if (localStorage.countOfGoods == 0) {
-		document.querySelector('.cart__product').innerHTML = `
-			<div class="cart__empty">
-				<img src="src/img/cart/empty-cart.svg" alt="Пустая корзина" class="cart__empty_img">
-				<p class="cart__empty_title">УПС!</p>
-				<p class="cart__empty_text">Ваша корзина пуста, откройте «Меню»
-				и выберите понравившийся товар.</p>
-			</div>
-		`
-	}
+	const cartEmpty = document.querySelector('.cart__empty')
+	localStorage.countOfGoods == 0 ? cartEmpty.style.display = 'flex' : cartEmpty.style.display = 'none'
 }
 
 

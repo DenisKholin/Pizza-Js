@@ -5,17 +5,16 @@ import { calculateTotalPrice, refreshCartCount } from "./total";
 
 const logic = () => {
 	let cartArray = JSON.parse(localStorage.idArray);
-
+	console.log(cartArray)
 	document.querySelector('.modal').addEventListener('click', ev => {
 		if (ev.target.classList.contains('modal__button') || ev.target.classList.contains('modal__button_price') || ev.target.classList.contains('modal__button_flare')) {
-
+			console.log(cartArray)
 			const
 				currentSize = document.querySelector('.modal__description_size').innerHTML,
 				currentWeight = document.querySelector('.modal__description_weight').innerHTML,
 				currentSrc = document.querySelector('.modal__pizza_img').getAttribute('src'),
 				currentAlt = document.querySelector('.modal__pizza_img').getAttribute('alt'),
 				currentPrice = document.querySelector('.modal__button_price').innerHTML,
-				serialNumber = ev.currentTarget.getAttribute('data-serialNumber'),
 				currentTitle = document.querySelector('.modal__name').innerHTML;
 			let
 				dataId;
@@ -39,6 +38,7 @@ const logic = () => {
 				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
 
 				if (currentItemCount) {
+
 					currentItemCount.innerHTML++;
 					changeLocalStorageCartItem(dataId, currentItemCount.innerHTML)
 					document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';

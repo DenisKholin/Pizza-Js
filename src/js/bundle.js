@@ -232,6 +232,7 @@ const addLocalStorageCartItem = (title, size, weight, src, price, id, count) => 
 		price,
 		count
 	})
+	emptyCart();
 }
 
 const changeLocalStorageCartItem = (id, count) => {
@@ -258,16 +259,8 @@ const renderFromLocalStorage = () => {
 }
 
 const emptyCart = () => {
-	if (localStorage.countOfGoods == 0) {
-		document.querySelector('.cart__product').innerHTML = `
-			<div class="cart__empty">
-				<img src="src/img/cart/empty-cart.svg" alt="Пустая корзина" class="cart__empty_img">
-				<p class="cart__empty_title">УПС!</p>
-				<p class="cart__empty_text">Ваша корзина пуста, откройте «Меню»
-				и выберите понравившийся товар.</p>
-			</div>
-		`
-	}
+	const cartEmpty = document.querySelector('.cart__empty')
+	localStorage.countOfGoods == 0 ? cartEmpty.style.display = 'flex' : cartEmpty.style.display = 'none'
 }
 
 
@@ -298,10 +291,10 @@ __webpack_require__.r(__webpack_exports__);
 
 const logic = () => {
 	let cartArray = JSON.parse(localStorage.idArray);
-
+	console.log(cartArray)
 	document.querySelector('.modal').addEventListener('click', ev => {
 		if (ev.target.classList.contains('modal__button') || ev.target.classList.contains('modal__button_price') || ev.target.classList.contains('modal__button_flare')) {
-
+			console.log(cartArray)
 			const
 				currentSize = document.querySelector('.modal__description_size').innerHTML,
 				currentWeight = document.querySelector('.modal__description_weight').innerHTML,
@@ -332,6 +325,7 @@ const logic = () => {
 				const currentItemCount = document.querySelector(`[data-id = ${dataId}] .cart__item_count`);
 
 				if (currentItemCount) {
+
 					currentItemCount.innerHTML++;
 					(0,_lStorage__WEBPACK_IMPORTED_MODULE_1__.changeLocalStorageCartItem)(dataId, currentItemCount.innerHTML)
 					document.querySelector(`[data-id = ${dataId}] .cart__item_price`).innerHTML = ((currentPrice * currentItemCount.innerHTML).toFixed(2)) + ' руб.';
